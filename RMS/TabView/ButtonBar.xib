@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="12121" systemVersion="16E195" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12089"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="N85-vA-p7d" customClass="ButtonBarViewCell" customModule="RMS" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="88" height="57"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                <rect key="frame" x="0.0" y="0.0" width="88" height="57"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Wnv-Es-jsY">
+                        <rect key="frame" x="0.0" y="36" width="88" height="21"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="88" id="6fw-HN-hPR"/>
+                            <constraint firstAttribute="height" constant="21" id="j7l-qq-lLP"/>
+                        </constraints>
+                        <fontDescription key="fontDescription" type="system" pointSize="10"/>
+                        <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="TuC-YZ-lw0">
+                        <rect key="frame" x="32" y="9" width="24" height="24"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="24" id="0pP-Br-Wzc"/>
+                            <constraint firstAttribute="width" constant="24" id="6mR-0e-hLE"/>
+                        </constraints>
+                    </imageView>
+                </subviews>
+            </view>
+            <constraints>
+                <constraint firstItem="TuC-YZ-lw0" firstAttribute="top" secondItem="N85-vA-p7d" secondAttribute="top" constant="9" id="PDB-z2-zU2"/>
+                <constraint firstItem="Wnv-Es-jsY" firstAttribute="top" secondItem="TuC-YZ-lw0" secondAttribute="bottom" constant="3" id="ieR-Nj-yaW"/>
+                <constraint firstItem="TuC-YZ-lw0" firstAttribute="centerX" secondItem="N85-vA-p7d" secondAttribute="centerX" id="pi4-tW-Irg"/>
+            </constraints>
+            <size key="customSize" width="88" height="61"/>
+            <connections>
+                <outlet property="imageView" destination="TuC-YZ-lw0" id="GiB-Eq-GQs"/>
+                <outlet property="label" destination="Wnv-Es-jsY" id="fak-pG-jMH"/>
+            </connections>
+            <point key="canvasLocation" x="882" y="45.5"/>
+        </collectionViewCell>
+    </objects>
+</document>

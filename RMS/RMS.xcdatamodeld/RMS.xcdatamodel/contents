@@ -1,4 +1,83 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="1" systemVersion="11A491" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
-    <elements/>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="12141" systemVersion="16E195" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="CLAIM_DETAILS" representedClassName="CLAIM_DETAILS" syncable="YES" codeGenerationType="class">
+        <attribute name="approved_amount" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="cheque_no" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="claim_no" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="claimed_mount" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="diagnosis" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="disallowance" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="excess" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="member_name" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="member_type" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="mode_of_payment" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="policy_no" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="reg_date" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="remarks" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="settled_amount" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="settled_amount_ro" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="staff_name" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="status" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="treatment_date" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="DEPENDENT_DETAILS" representedClassName="DEPENDENT_DETAILS" syncable="YES" codeGenerationType="class">
+        <attribute name="client_id" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="dender" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="effective_date" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="email" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="member_id" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="member_name" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="nationality" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="phone" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="policy_ref" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="relationship" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="staff_id" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="MASTER_DATA" representedClassName="MASTER_DATA" syncable="YES" codeGenerationType="class">
+        <attribute name="changePin" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="clientID" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="mobileNumber" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="pin" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="staffID" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="PDF" representedClassName="PDF" syncable="YES" codeGenerationType="class">
+        <attribute name="pdf_link" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="pdf_name" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="PRE_APPROVALS" representedClassName="PRE_APPROVALS" syncable="YES" codeGenerationType="class">
+        <attribute name="diagnosis" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="entry_dt" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="hospital_name" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="memberid" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="patient_name" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="place_code" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="pol_ref" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="pre_approvaldt" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="pre_approvalno" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="remarks" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="staff_id" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="staff_name" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="status" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="STAFF_DETAILS" representedClassName="STAFF_DETAILS" syncable="YES" codeGenerationType="class">
+        <attribute name="client_id" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="dender" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="effective_date" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="email" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="member_id" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="member_name" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="nationality" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="phone" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="policy_ref" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="relationship" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="staff_id" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <elements>
+        <element name="CLAIM_DETAILS" positionX="-36" positionY="126" width="128" height="315"/>
+        <element name="DEPENDENT_DETAILS" positionX="-36" positionY="99" width="128" height="210"/>
+        <element name="MASTER_DATA" positionX="-63" positionY="-18" width="128" height="120"/>
+        <element name="PDF" positionX="-18" positionY="153" width="128" height="75"/>
+        <element name="PRE_APPROVALS" positionX="-27" positionY="144" width="128" height="240"/>
+        <element name="STAFF_DETAILS" positionX="-54" positionY="18" width="128" height="210"/>
+    </elements>
 </model>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="12121" systemVersion="16E195" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12089"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="iN0-l3-epB" customClass="InformationView" customModule="RMS" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="375" height="70"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="pdf" translatesAutoresizingMaskIntoConstraints="NO" id="0d5-Hl-sap">
+                    <rect key="frame" x="5" y="5" width="50" height="46"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="46" id="FlA-Dc-uaB"/>
+                        <constraint firstAttribute="width" constant="50" id="Upw-4a-i2v"/>
+                    </constraints>
+                </imageView>
+                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="download" translatesAutoresizingMaskIntoConstraints="NO" id="g7w-Ou-VQb">
+                    <rect key="frame" x="344" y="12" width="26" height="23"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="23" id="VVr-Q7-OP6"/>
+                        <constraint firstAttribute="width" constant="26" id="ulN-Kp-vOW"/>
+                    </constraints>
+                </imageView>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="80b-kv-idj">
+                    <rect key="frame" x="66" y="12" width="243" height="21"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="21" id="DdS-a4-Gel"/>
+                        <constraint firstAttribute="width" constant="243" id="byJ-Vs-G1U"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                    <nil key="textColor"/>
+                    <nil key="highlightedColor"/>
+                </label>
+            </subviews>
+            <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+            <constraints>
+                <constraint firstItem="80b-kv-idj" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" constant="12" id="PW8-HE-gWq"/>
+                <constraint firstItem="0d5-Hl-sap" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" constant="5" id="TTR-T4-jBL"/>
+                <constraint firstItem="80b-kv-idj" firstAttribute="leading" secondItem="0d5-Hl-sap" secondAttribute="trailing" constant="11" id="e5y-zg-7eX"/>
+                <constraint firstItem="g7w-Ou-VQb" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" constant="12" id="i9X-wK-JPP"/>
+                <constraint firstAttribute="trailing" secondItem="g7w-Ou-VQb" secondAttribute="trailing" constant="5" id="kFG-fK-QKS"/>
+                <constraint firstItem="0d5-Hl-sap" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" constant="5" id="yIj-Zo-xhB"/>
+            </constraints>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <connections>
+                <outlet property="pdfHeading" destination="80b-kv-idj" id="2pl-Lg-gQM"/>
+            </connections>
+            <point key="canvasLocation" x="24.5" y="52"/>
+        </view>
+    </objects>
+    <resources>
+        <image name="download" width="26" height="23"/>
+        <image name="pdf" width="46" height="50"/>
+    </resources>
+</document>
