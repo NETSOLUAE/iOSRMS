@@ -15,67 +15,76 @@ class LoadingIndicatorView {
     static var currentLoadingText: String?
     
     static func show() {
-        guard let currentMainWindow = UIApplication.shared.keyWindow else {
-            return
-        }
-        show(currentMainWindow)
+//        DispatchQueue.main.sync(execute: {
+            /* stop the activity indicator (you are now on the main queue again) */
+            guard let currentMainWindow = UIApplication.shared.keyWindow else {
+                return
+            }
+            show(currentMainWindow)
+//        });
     }
     
     static func show(_ loadingText: String) {
-        guard let currentMainWindow = UIApplication.shared.keyWindow else {
-            return
-        }
-        show(currentMainWindow, loadingText: loadingText)
+//        DispatchQueue.main.sync(execute: {
+            guard let currentMainWindow = UIApplication.shared.keyWindow else {
+                return
+            }
+            show(currentMainWindow, loadingText: loadingText)
+//        });
     }
     
     static func show(_ overlayTarget : UIView) {
-        show(overlayTarget, loadingText: nil)
+//        DispatchQueue.main.sync(execute: {
+            show(overlayTarget, loadingText: nil)
+//        });
     }
     
     static func show(_ overlayTarget : UIView, loadingText: String?) {
         // Clear it first in case it was already shown
         hide()
         
-        // register device orientation notification
-        NotificationCenter.default.addObserver(
-            self, selector:
-            #selector(LoadingIndicatorView.rotated),
-            name: NSNotification.Name.UIDeviceOrientationDidChange,
-            object: nil)
-        
-        // Create the overlay
-        let overlay = UIView(frame: overlayTarget.frame)
-        overlay.center = overlayTarget.center
-        overlay.alpha = 0
-        overlay.backgroundColor = UIColor.black
-        overlayTarget.addSubview(overlay)
-        overlayTarget.bringSubview(toFront: overlay)
-        
-        // Create and animate the activity indicator
-        let indicator = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.white)
-        indicator.center = overlay.center
-        indicator.startAnimating()
-        overlay.addSubview(indicator)
-        
-        // Create label
-        if let textString = loadingText {
-            let label = UILabel()
-            label.text = textString
-            label.textColor = UIColor.white
-            label.sizeToFit()
-            label.center = CGPoint(x: indicator.center.x, y: indicator.center.y + 30)
-            overlay.addSubview(label)
-        }
-        
-        // Animate the overlay to show
-        UIView.beginAnimations(nil, context: nil)
-        UIView.setAnimationDuration(0.5)
-        overlay.alpha = overlay.alpha > 0 ? 0 : 0.5
-        UIView.commitAnimations()
-        
-        currentOverlay = overlay
-        currentOverlayTarget = overlayTarget
-        currentLoadingText = loadingText
+//        DispatchQueue.main.sync(execute: {
+            // register device orientation notification
+            NotificationCenter.default.addObserver(
+                self, selector:
+                #selector(LoadingIndicatorView.rotated),
+                name: NSNotification.Name.UIDeviceOrientationDidChange,
+                object: nil)
+            
+            // Create the overlay
+            let overlay = UIView(frame: overlayTarget.frame)
+            overlay.center = overlayTarget.center
+            overlay.alpha = 0
+            overlay.backgroundColor = UIColor.black
+            overlayTarget.addSubview(overlay)
+            overlayTarget.bringSubview(toFront: overlay)
+            
+            // Create and animate the activity indicator
+            let indicator = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.white)
+            indicator.center = overlay.center
+            indicator.startAnimating()
+            overlay.addSubview(indicator)
+            
+            // Create label
+            if let textString = loadingText {
+                let label = UILabel()
+                label.text = textString
+                label.textColor = UIColor.white
+                label.sizeToFit()
+                label.center = CGPoint(x: indicator.center.x, y: indicator.center.y + 30)
+                overlay.addSubview(label)
+            }
+            
+            // Animate the overlay to show
+            UIView.beginAnimations(nil, context: nil)
+            UIView.setAnimationDuration(0.5)
+            overlay.alpha = overlay.alpha > 0 ? 0 : 0.5
+            UIView.commitAnimations()
+            
+            currentOverlay = overlay
+            currentOverlayTarget = overlayTarget
+            currentLoadingText = loadingText
+//        });
     }
     
     static func hide() {
@@ -90,6 +99,13 @@ class LoadingIndicatorView {
             currentLoadingText = nil
             currentOverlayTarget = nil
         }
+    }
+    
+    static func hideInMain() {
+//        DispatchQueue.main.sync(execute: {
+            /* stop the activity indicator (you are now on the main queue again) */
+            self.hide()
+//        });
     }
     
     @objc private static func rotated() {

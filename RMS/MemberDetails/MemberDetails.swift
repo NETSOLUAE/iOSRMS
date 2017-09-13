@@ -14,14 +14,27 @@ import CoreData
 //
 struct Section {
     var name: String!
+    var gender: String!
     var items: [String]!
     var relationship: [String]!
+    var genderArray: [String]!
+    var policyNo: [String]!
+    var nationality: [String]!
+    var mobile: [String]!
+    var email: [String]!
     var collapsed: Bool!
     
-    init(name: String, items: [String],  relationship: [String], collapsed: Bool = false) {
+    init(name: String, gender: String, items: [String], relationship: [String], genderArray: [String], policyNo: [String], nationality: [String], mobile: [String], email: [String], collapsed: Bool = false) {
         self.name = name
+        self.gender = gender
         self.items = items
         self.relationship = relationship
+        self.relationship = relationship
+        self.genderArray = genderArray
+        self.policyNo = policyNo
+        self.nationality = nationality
+        self.mobile = mobile
+        self.email = email
         self.collapsed = collapsed
     }
 }
@@ -29,6 +42,7 @@ struct Section {
 class MemberDetails: UITableViewController, IndicatorInfoProvider {
     var itemInfo: IndicatorInfo = "Member Details"
     var sections = [Section]()
+    let sharedInstance = CoreDataManager.sharedInstance;
     
     init(itemInfo: IndicatorInfo) {
         self.itemInfo = itemInfo
@@ -49,14 +63,15 @@ class MemberDetails: UITableViewController, IndicatorInfoProvider {
         tableView.separatorInset = UIEdgeInsets.init(top: 0, left: 5, bottom: 0, right: 5)
         var dependentsArray = Array<String>()
         var relationArray = Array<String>()
+        var genderArray = Array<String>()
+        var policyNoArray = Array<String>()
+        var nationalityArray = Array<String>()
+        var mobileArray = Array<String>()
+        var emailArray = Array<String>()
         
         // Initialize the sections array
-        guard let appDelegate =
-            UIApplication.shared.delegate as? AppDelegate else {
-                return
-        }
         let managedContext =
-            appDelegate.persistentContainer.viewContext
+            sharedInstance.persistentContainer.viewContext
         
         let fetchRequest =
             NSFetchRequest<NSManagedObject>(entityName: "STAFF_DETAILS")
@@ -64,6 +79,7 @@ class MemberDetails: UITableViewController, IndicatorInfoProvider {
             let people = try managedContext.fetch(fetchRequest)
             for people in people {
                 let memberName = (people.value(forKey: "member_name") ?? "") as! String;
+                let gender = (people.value(forKey: "dender") ?? "") as! String;
                 var dependents  = [DEPENDENT_DETAILS]() // Where Locations = your NSManaged Class
                 
                 let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "DEPENDENT_DETAILS")
@@ -72,11 +88,16 @@ class MemberDetails: UITableViewController, IndicatorInfoProvider {
                     for dependents in dependents {
                         dependentsArray.append(dependents.member_name!)
                         relationArray.append(dependents.relationship!)
+                        genderArray.append(dependents.dender!)
+                        policyNoArray.append(dependents.policy_ref!)
+                        nationalityArray.append(dependents.nationality!)
+                        mobileArray.append(dependents.phone!)
+                        emailArray.append(dependents.email!)
                     }
                 } catch let error as NSError {
                     print("Could not fetch. \(error), \(error.userInfo)")
                 }
-                sections.append(Section(name: memberName, items: dependentsArray, relationship: relationArray))
+                sections.append(Section(name: memberName, gender: gender, items: dependentsArray, relationship: relationArray, genderArray: genderArray, policyNo: policyNoArray, nationality: nationalityArray, mobile: mobileArray, email: emailArray))
                 return
             }
         } catch let error as NSError {
@@ -113,8 +134,23 @@ extension MemberDetails {
         cell.relation?.text = sections[(indexPath as NSIndexPath).section].relationship[(indexPath as NSIndexPath).row]
         
         cell.name?.text = sections[(indexPath as NSIndexPath).section].items[(indexPath as NSIndexPath).row]
-        cell.relation?.text=sections[(indexPath as NSIndexPath).section].relationship[(indexPath as NSIndexPath).row]
-        cell.imageView?.image = UIImage(named: "member_icon")
+        let relation = sections[(indexPath as NSIndexPath).section].relationship[(indexPath as NSIndexPath).row]
+        if (relation == "S") {
+            cell.relation?.text = "Son"
+            cell.child_icon.image = UIImage(named: "child-male")
+        } else if (relation == "D") {
+            cell.relation?.text = "Daughter"
+            cell.child_icon.image = UIImage(named: "child-female")
+        } else if (relation == "W") {
+            cell.relation?.text = "Wife"
+            cell.child_icon.image = UIImage(named: "female")
+        } else if (relation == "H") {
+            cell.relation?.text = "Husband"
+            cell.child_icon.image = UIImage(named: "male")
+        } else {
+            cell.relation?.text = relation
+            cell.child_icon.image = UIImage(named: "member_icon")
+        }
         cell.selectionStyle = UITableViewCellSelectionStyle.none
         
         return cell
@@ -129,6 +165,18 @@ extension MemberDetails {
         let cell = self.tableView.dequeueReusableHeaderFooterView(withIdentifier: "MemberGroup")
         let header = cell as! MemberGroup
         header.name.text = sections[section].name
+        let childCount = sections[section].items.count
+        if (childCount > 0) {
+            header.group_icon.image = UIImage(named: "family")
+        } else {
+            if (sections[section].gender == "M") {
+                header.group_icon.image = UIImage(named: "male")
+            } else if (sections[section].gender == "F") {
+                header.group_icon.image = UIImage(named: "female")
+            } else {
+                header.group_icon.image = UIImage(named: "group_icon")
+            }
+        }
         
         return header
     }
@@ -139,6 +187,44 @@ extension MemberDetails {
     
     override func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
         return 1.0
+    }
+    
+    // click cell
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath){
+        let appDelegate = UIApplication.shared.delegate
+        let name = sections[(indexPath as NSIndexPath).section].items[(indexPath as NSIndexPath).row]
+        var relation = sections[(indexPath as NSIndexPath).section].relationship[(indexPath as NSIndexPath).row]
+        let policy = sections[(indexPath as NSIndexPath).section].policyNo[(indexPath as NSIndexPath).row]
+        var gender = sections[(indexPath as NSIndexPath).section].genderArray[(indexPath as NSIndexPath).row]
+        let nationality = sections[(indexPath as NSIndexPath).section].nationality[(indexPath as NSIndexPath).row]
+        let mobile = sections[(indexPath as NSIndexPath).section].mobile[(indexPath as NSIndexPath).row]
+        let email = sections[(indexPath as NSIndexPath).section].email[(indexPath as NSIndexPath).row]
+        
+        if (relation == "S") {
+            relation = "Son"
+        } else if (relation == "D") {
+            relation = "Daughter"
+        } else if (relation == "W") {
+            relation = "Wife"
+        } else if (relation == "H") {
+            relation = "Husband"
+        }
+        
+        if (gender == "M") {
+            gender = "Male"
+        } else {
+            gender = "Female"
+        }
+        
+        let vc = CustomAlertMember()
+        vc.policy = policy
+        vc.relation = relation
+        vc.name = name
+        vc.gender = gender
+        vc.nationality = nationality
+        vc.mobile = mobile
+        vc.email = email
+        (appDelegate?.window??.rootViewController)?.present(vc, animated: true, completion: nil)
     }
     
 }

@@ -12,6 +12,7 @@
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="CustomAlertViewController" customModule="RMS" customModuleProvider="target">
             <connections>
                 <outlet property="confirmPin" destination="bd5-Kh-Gy8" id="HEk-0m-8at"/>
+                <outlet property="heading" destination="8CP-O2-Ime" id="75g-tu-iWM"/>
                 <outlet property="newPin" destination="aSL-0L-DRQ" id="Z67-VL-uQk"/>
                 <outlet property="oldPin" destination="RCm-gg-JyS" id="spO-xK-h9c"/>
                 <outlet property="view" destination="pnJ-mV-ciB" id="8Lg-UT-zLh"/>
@@ -22,37 +23,32 @@
             <rect key="frame" x="0.0" y="0.0" width="260" height="266"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
             <subviews>
-                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Reset Pin" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8CP-O2-Ime">
-                    <rect key="frame" x="93" y="30" width="74" height="21"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Reset Pin" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8CP-O2-Ime">
+                    <rect key="frame" x="16" y="30" width="228" height="21"/>
                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                     <nil key="textColor"/>
                     <nil key="highlightedColor"/>
                 </label>
-                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Enter Your Old PIN" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="RCm-gg-JyS">
+                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Enter Your Old PIN" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="RCm-gg-JyS">
                     <rect key="frame" x="16" y="67" width="228" height="30"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                     <nil key="textColor"/>
                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
                     <textInputTraits key="textInputTraits"/>
                 </textField>
-                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Enter Your New Pin" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="aSL-0L-DRQ">
+                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Enter Your New Pin" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="aSL-0L-DRQ">
                     <rect key="frame" x="16" y="113" width="228" height="30"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                     <nil key="textColor"/>
                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
                     <textInputTraits key="textInputTraits"/>
                 </textField>
-                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Confirm Your New Pin" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="bd5-Kh-Gy8">
+                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Confirm Your New Pin" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="bd5-Kh-Gy8">
                     <rect key="frame" x="16" y="159" width="228" height="30"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                     <nil key="textColor"/>
                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
                     <textInputTraits key="textInputTraits"/>
                 </textField>
-                <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fhg-bE-2u4">
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fhg-bE-2u4">
                     <rect key="frame" x="38" y="207" width="46" height="30"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                     <state key="normal" title="RESET">
                         <color key="titleColor" red="0.92458939549999997" green="0.094764061270000005" blue="0.25468623639999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     </state>
@@ -60,9 +56,8 @@
                         <action selector="resetPin:" destination="-1" eventType="touchUpInside" id="j7k-zK-f0n"/>
                     </connections>
                 </button>
-                <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="NoB-4H-I94">
-                    <rect key="frame" x="164" y="207" width="63" height="30"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="NoB-4H-I94">
+                    <rect key="frame" x="168" y="207" width="59" height="30"/>
                     <state key="normal" title="CANCEL">
                         <color key="titleColor" red="0.92458939549999997" green="0.094764061270000005" blue="0.25468623639999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     </state>
@@ -72,8 +67,27 @@
                 </button>
             </subviews>
             <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+            <constraints>
+                <constraint firstAttribute="trailing" secondItem="bd5-Kh-Gy8" secondAttribute="trailing" constant="16" id="1Wj-ry-CKW"/>
+                <constraint firstItem="8CP-O2-Ime" firstAttribute="leading" secondItem="pnJ-mV-ciB" secondAttribute="leading" constant="16" id="6Mz-NY-CQO"/>
+                <constraint firstAttribute="trailing" secondItem="8CP-O2-Ime" secondAttribute="trailing" constant="16" id="7ES-mS-1Hh"/>
+                <constraint firstItem="RCm-gg-JyS" firstAttribute="top" secondItem="8CP-O2-Ime" secondAttribute="bottom" constant="16" id="Gq7-S4-uAf"/>
+                <constraint firstItem="aSL-0L-DRQ" firstAttribute="top" secondItem="RCm-gg-JyS" secondAttribute="bottom" constant="16" id="HrU-ch-fsJ"/>
+                <constraint firstItem="aSL-0L-DRQ" firstAttribute="leading" secondItem="pnJ-mV-ciB" secondAttribute="leading" constant="16" id="IFt-sx-U3l"/>
+                <constraint firstItem="fhg-bE-2u4" firstAttribute="top" secondItem="bd5-Kh-Gy8" secondAttribute="bottom" constant="18" id="KSq-JS-wfs"/>
+                <constraint firstAttribute="trailing" secondItem="NoB-4H-I94" secondAttribute="trailing" constant="33" id="PLf-Qd-e0U"/>
+                <constraint firstItem="RCm-gg-JyS" firstAttribute="leading" secondItem="pnJ-mV-ciB" secondAttribute="leading" constant="16" id="Swo-qN-IEv"/>
+                <constraint firstItem="8CP-O2-Ime" firstAttribute="top" secondItem="pnJ-mV-ciB" secondAttribute="top" constant="30" id="YK6-um-HH6"/>
+                <constraint firstItem="bd5-Kh-Gy8" firstAttribute="top" secondItem="aSL-0L-DRQ" secondAttribute="bottom" constant="16" id="Z17-mD-v2N"/>
+                <constraint firstItem="8CP-O2-Ime" firstAttribute="centerX" secondItem="pnJ-mV-ciB" secondAttribute="centerX" id="gtB-0k-LMP"/>
+                <constraint firstItem="NoB-4H-I94" firstAttribute="top" secondItem="bd5-Kh-Gy8" secondAttribute="bottom" constant="18" id="ji4-HZ-Ozg"/>
+                <constraint firstItem="bd5-Kh-Gy8" firstAttribute="leading" secondItem="pnJ-mV-ciB" secondAttribute="leading" constant="16" id="l8G-6I-8me"/>
+                <constraint firstItem="fhg-bE-2u4" firstAttribute="leading" secondItem="pnJ-mV-ciB" secondAttribute="leading" constant="38" id="mxG-zd-DtS"/>
+                <constraint firstAttribute="trailing" secondItem="RCm-gg-JyS" secondAttribute="trailing" constant="16" id="vSf-6X-yzh"/>
+                <constraint firstAttribute="trailing" secondItem="aSL-0L-DRQ" secondAttribute="trailing" constant="16" id="x3y-3I-YWC"/>
+            </constraints>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
-            <point key="canvasLocation" x="473" y="34"/>
+            <point key="canvasLocation" x="542" y="40"/>
         </view>
     </objects>
 </document>

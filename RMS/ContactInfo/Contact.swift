@@ -10,6 +10,5 @@ import UIKit
 
 class Contact: UITableViewCell {
     @IBOutlet weak var branch: UILabel!
-    
     @IBOutlet weak var address: UILabel!
 }

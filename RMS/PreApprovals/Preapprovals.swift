@@ -17,6 +17,9 @@ class Preapprovals: UITableViewController, IndicatorInfoProvider {
     var filteredCandies = [PRE_APPROVALS]()
     let refreshControl1 = UIRefreshControl()
     let constants = Constants()
+    let webserviceManager = WebserviceManager();
+    let sharedInstance = CoreDataManager.sharedInstance;
+    let managedContext = CoreDataManager.sharedInstance.persistentContainer.viewContext
     
     init(style: UITableViewStyle, itemInfo: IndicatorInfo) {
         self.itemInfo = itemInfo
@@ -59,25 +62,16 @@ class Preapprovals: UITableViewController, IndicatorInfoProvider {
     }
     
     func refreshPreapproval(refreshControl: UIRefreshControl) {
-        guard let appDelegate =
-            UIApplication.shared.delegate as? AppDelegate else {
-                return
-        }
-        let managedContext =
-            appDelegate.persistentContainer.viewContext
-        
-        let fetchRequest =
-            NSFetchRequest<NSManagedObject>(entityName: "STAFF_DETAILS")
+        var results : [STAFF_DETAILS]
+        let studentUniversityFetchRequest: NSFetchRequest<STAFF_DETAILS>  = STAFF_DETAILS.fetchRequest()
+        studentUniversityFetchRequest.returnsObjectsAsFaults = false
         do {
-            let people = try managedContext.fetch(fetchRequest)
-            for people in people {
-                let staff_id = (people.value(forKey: "staff_id") ?? "") as! String;
-                let client_id = (people.value(forKey: "client_id") ?? "") as! String;
-                self.preApproval(actionId: "pre_approval", staffID: staff_id, clientID: client_id)
-                return
-            }
+            results = try self.managedContext.fetch(studentUniversityFetchRequest)
+            let staffID = results.first!.staff_id ?? ""
+            let clientID = results.first!.client_id ?? ""
+            self.preApproval(actionId: "pre_approval", staffID: staffID, clientID: clientID)
         } catch let error as NSError {
-            print("Could not fetch. \(error), \(error.userInfo)")
+            print ("Could not fetch \(error), \(error.userInfo)")
         }
     }
     
@@ -105,7 +99,7 @@ class Preapprovals: UITableViewController, IndicatorInfoProvider {
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: "patient_name", ascending: false)]
         
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
-        let managerContext = appDelegate.persistentContainer.viewContext
+        let managerContext = self.sharedInstance.persistentContainer.viewContext
         
         // Create Fetched Results Controller
         let fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: managerContext, sectionNameKeyPath: nil, cacheName: nil)
@@ -201,11 +195,6 @@ class Preapprovals: UITableViewController, IndicatorInfoProvider {
     
     func filterContentForSearchText(searchText: String, scope: String = "All") {
         var locations  = [PRE_APPROVALS]() // Where Locations = your NSManaged Class
-        guard let appDelegate =
-            UIApplication.shared.delegate as? AppDelegate else {
-                return
-        }
-        let managedContext = appDelegate.persistentContainer.viewContext
         
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "PRE_APPROVALS")
         do {
@@ -220,148 +209,26 @@ class Preapprovals: UITableViewController, IndicatorInfoProvider {
     }
     
     func preApproval(actionId: String, staffID: String, clientID: String) -> Void {
-        let POST_PARAMS = "?action_id=" + actionId + "&staff_id=" + staffID + "&client_no=" + clientID;
         
-        let urlString = constants.BASE_URL + POST_PARAMS;
+        let endPoint: String = {
+            return "\(constants.BASE_URL)?action_id=\(actionId)&staff_id=\(staffID)&client_no=\(clientID)"
+        }()
         
-        // Create request with URL
-        let url = URL(string: urlString)!
-        var request = URLRequest(url: url, cachePolicy: .reloadIgnoringCacheData, timeoutInterval: 30)
-        request.httpMethod = "GET"
-        
-        // Fire you request
-        let task = URLSession.shared.dataTask(with: request) { data, response, error in
-            // Do whatever you would like to
-            if (error != nil) {
-                print (error?.localizedDescription ?? "URL Error!")
-            } else {
-                if let urlContent = data {
-                    do {
-                        let parsedData = try JSONSerialization.jsonObject(with: urlContent, options: .allowFragments) as! [String:Any]
-                        let status = parsedData["status"] as! String
-                        let require_update = parsedData["require_update"] as! String
-                        
-                        if (status == "success"){
-                            if (require_update == "yes") {
-                                self.deletePre()
-                                let data = parsedData["data"] as! [[String:Any]]
-                                for data in data {
-                                    let memberid = data["memberid"] as? String ?? ""
-                                    let patient_name = data["patient_name"] as? String ?? ""
-                                    let staff_id = data["staff_id"] as? String ?? ""
-                                    let staff_name = data["staff_name"] as? String ?? ""
-                                    let pol_ref = data["pol_ref"] as? String ?? ""
-                                    let entry_dt = data["entry_dt"] as? String ?? ""
-                                    let diagnosis = data["diagnosis"] as? String ?? ""
-                                    let place_code = data["place_code"] as? String ?? ""
-                                    let hospital_name = data["hospital_name"] as? String ?? ""
-                                    let pre_approvalno = data["pre_approvalno"] as? String ?? ""
-                                    let pre_approvaldt = data["pre_approvaldt"] as? String ?? ""
-                                    let remarks = data["remarks"] as? String ?? ""
-                                    let status = data["status"] as? String ?? ""
-                                    self.savepreApproval(memberid: memberid, patient_name: patient_name, staff_id: staff_id, staff_name: staff_name, pol_ref: pol_ref,
-                                                         entry_dt: entry_dt, diagnosis: diagnosis, place_code: place_code, hospital_name: hospital_name, pre_approvalno: pre_approvalno, pre_approvaldt: pre_approvaldt, remarks: remarks, status: status)
-                                    
-                                }
-                                self.tableView.reloadData()
-                                self.refreshControl1.endRefreshing()
-                                return
-                            } else {
-                                self.tableView.reloadData()
-                                self.refreshControl1.endRefreshing()
-                                return
-                            }
-                        } else if (status == "fail") {
-                            self.alertDialog (heading: "", message: self.constants.errorMessage);
-                            return
-                        } else {
-                            self.alertDialog (heading: "", message: self.constants.errorMessage);
-                            return
-                        }
-                        
-                    } catch {
-                        self.alertDialog (heading: "", message: self.constants.errorMessage);
-                        print("JSON processessing failed")
-                        return
-                    }//catch closing bracket
-                }// if let closing bracket
-            }//else closing bracket
-        }// task closing bracket
-        task.resume();
-    }
-    
-    func savepreApproval(memberid: String, patient_name: String, staff_id: String, staff_name: String, pol_ref: String, entry_dt: String, diagnosis: String, place_code: String,
-                         hospital_name: String, pre_approvalno: String, pre_approvaldt: String, remarks: String, status: String) {
-        
-        guard let appDelegate =
-            UIApplication.shared.delegate as? AppDelegate else {
-                return
-        }
-        let managedContext =
-            appDelegate.persistentContainer.viewContext
-        let master_data =
-            NSEntityDescription.entity(forEntityName: "PRE_APPROVALS",
-                                       in: managedContext)!
-        
-        let data = NSManagedObject(entity: master_data,
-                                   insertInto: managedContext)
-        data.setValue(memberid, forKeyPath: "memberid")
-        data.setValue(patient_name, forKeyPath: "patient_name")
-        data.setValue(staff_id, forKeyPath: "staff_id")
-        data.setValue(staff_name, forKeyPath: "staff_name")
-        data.setValue(pol_ref, forKeyPath: "pol_ref")
-        data.setValue(entry_dt, forKeyPath: "entry_dt")
-        data.setValue(diagnosis, forKeyPath: "diagnosis")
-        data.setValue(place_code, forKeyPath: "place_code")
-        data.setValue(hospital_name, forKeyPath: "hospital_name")
-        data.setValue(pre_approvalno, forKeyPath: "pre_approvalno")
-        data.setValue(pre_approvaldt, forKeyPath: "pre_approvaldt")
-        data.setValue(remarks, forKeyPath: "remarks")
-        data.setValue(status, forKeyPath: "status")
-        let moc = NSManagedObjectContext(concurrencyType:.mainQueueConcurrencyType)
-        let privateMOC = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
-        privateMOC.parent = moc
-        
-        privateMOC.perform({
-            do {
-                try privateMOC.save()
-            } catch let error as NSError {
-                print("Could not save. \(error), \(error.userInfo)")
+        self.webserviceManager.login(type: "double", endPoint: endPoint) { (result) in
+            LoadingIndicatorView.hideInMain()
+            switch result {
+            case .Success(let data, let require_update):
+                if (require_update == "yes") {
+                    self.sharedInstance.clearPreApprovalDetails()
+                    self.sharedInstance.saveInPreApprovalDataWith(array: [data])
+                }
+                self.tableView.reloadData()
+                self.refreshControl1.endRefreshing()
+            case .Error(let message):
+                self.alertDialog (heading: "", message: message);
+            default:
+                self.alertDialog (heading: "", message: self.constants.errorMessage);
             }
-        })
-    }
-    
-    func deletePre () {
-        guard let appDelegate =
-            UIApplication.shared.delegate as? AppDelegate else {
-                return
-        }
-        let context = appDelegate.persistentContainer.viewContext
-        
-        //create a fetch request, telling it about the entity
-        let fetchRequest: NSFetchRequest<PRE_APPROVALS> = PRE_APPROVALS.fetchRequest()
-        
-        do {
-            //go get the results
-            let array_users = try context.fetch(fetchRequest)
-            
-            //You need to convert to NSManagedObject to use 'for' loops
-            for user in array_users as [NSManagedObject] {
-                //get the Key Value pairs (although there may be a better way to do that...
-                context.delete(user)
-            }
-            //save the context
-            
-            do {
-                try context.save()
-            } catch let error as NSError  {
-                print("Could not save \(error), \(error.userInfo)")
-            } catch {
-                
-            }
-            
-        } catch {
-            print("Error with request: \(error)")
         }
     }
     

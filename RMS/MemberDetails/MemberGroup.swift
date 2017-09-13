@@ -11,6 +11,7 @@ import UIKit
 class MemberGroup: UITableViewHeaderFooterView {
     
     @IBOutlet weak var name: UILabel!
+    @IBOutlet weak var group_icon: UIImageView!
     
     override func layoutSubviews() {
         super.layoutSubviews()

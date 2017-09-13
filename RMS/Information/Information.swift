@@ -9,9 +9,10 @@
 import UIKit
 import CoreData
 
-class Information: UITableViewController, IndicatorInfoProvider {
+class Information: UITableViewController, IndicatorInfoProvider, UIDocumentInteractionControllerDelegate {
     
     var itemInfo: IndicatorInfo = "Information"
+    let sharedInstance = CoreDataManager.sharedInstance;
     
     init(style: UITableViewStyle, itemInfo: IndicatorInfo) {
         self.itemInfo = itemInfo
@@ -62,7 +63,7 @@ class Information: UITableViewController, IndicatorInfoProvider {
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: "pdf_name", ascending: false)]
         
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
-        let managerContext = appDelegate.persistentContainer.viewContext
+        let managerContext = self.sharedInstance.persistentContainer.viewContext
         
         // Create Fetched Results Controller
         let fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: managerContext, sectionNameKeyPath: nil, cacheName: nil)
@@ -159,16 +160,20 @@ class Information: UITableViewController, IndicatorInfoProvider {
                     if let statusCode = (response as? HTTPURLResponse)?.statusCode {
                         print("Successfully downloaded. Status code: \(statusCode)")
                     }
-                    DispatchQueue.main.sync(execute: {
-                        /* stop the activity indicator (you are now on the main queue again) */
-                        LoadingIndicatorView.hide()
-                    });
                     
                     do {
                         if(FileManager.default.fileExists(atPath: (destinationFileUrl.path))){
                             try! FileManager.default.removeItem(at: destinationFileUrl)
                         }
                         try FileManager.default.copyItem(at: tempLocalUrl, to: destinationFileUrl)
+                        
+                        let viewer = UIDocumentInteractionController(url: URL(fileURLWithPath: destinationFileUrl.path))
+                        viewer.delegate = self
+                        viewer.presentPreview(animated: true)
+                        DispatchQueue.main.sync(execute: {
+                            /* stop the activity indicator (you are now on the main queue again) */
+                            LoadingIndicatorView.hide()
+                        });
                     } catch (let writeError) {
                         print("Error creating a file \(destinationFileUrl) : \(writeError)")
                     }
@@ -180,6 +185,10 @@ class Information: UITableViewController, IndicatorInfoProvider {
             task.resume()
             
         }
+    }
+    
+    func documentInteractionControllerViewControllerForPreview(_ controller: UIDocumentInteractionController) -> UIViewController {
+        return self
     }
 
 }

@@ -28,6 +28,7 @@ protocol LeftMenuProtocol : class {
 class LeftViewController : UIViewController, LeftMenuProtocol {
     
     @IBOutlet weak var tableView: UITableView!
+    var isEb = false
     var menus = ["Reset Pin", "Notification", "Logout"]
     var images = Array<UIImage>(arrayLiteral: UIImage(named: "menureset")!, UIImage(named: "notification")!, UIImage(named: "menulogout")!)
     var mainViewController: UIViewController!
@@ -47,6 +48,10 @@ class LeftViewController : UIViewController, LeftMenuProtocol {
         
         self.imageHeaderView = ImageHeaderView.loadNib()
         self.view.addSubview(self.imageHeaderView)
+        
+        if (isEb) {
+            menus = ["Reset Password", "Notification", "Logout"]
+        }
     }
     
     override func viewDidAppear(_ animated: Bool) {

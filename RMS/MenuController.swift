@@ -8,6 +8,10 @@
 
 import UIKit
 
+struct currentSelection {
+    static var name = String();
+}
+
 class MenuController: UIViewController {
 
     @IBOutlet weak var background: UIView!
@@ -21,7 +25,10 @@ class MenuController: UIViewController {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        currentSelection.name = segue.identifier!
+    }
 
 }
 

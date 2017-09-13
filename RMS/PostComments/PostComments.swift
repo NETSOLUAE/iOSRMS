@@ -18,6 +18,9 @@ class PostComments: UIViewController, IndicatorInfoProvider, UITextViewDelegate,
     @IBOutlet weak var mobileNumber: UITextField!
     @IBOutlet weak var comments: UITextView!
     var itemInfo: IndicatorInfo = "Post Comments"
+    let sharedInstance = CoreDataManager.sharedInstance;
+    let webserviceManager = WebserviceManager();
+    let managedContext = CoreDataManager.sharedInstance.persistentContainer.viewContext
     
     init(itemInfo: IndicatorInfo) {
         self.itemInfo = itemInfo
@@ -57,26 +60,41 @@ class PostComments: UIViewController, IndicatorInfoProvider, UITextViewDelegate,
         subject.leftView = paddingView2
         subject.leftViewMode = UITextFieldViewMode.always
         
-        guard let appDelegate =
-            UIApplication.shared.delegate as? AppDelegate else {
-                return
-        }
-        let managedContext =
-            appDelegate.persistentContainer.viewContext
-        
-        let fetchRequest =
-            NSFetchRequest<NSManagedObject>(entityName: "STAFF_DETAILS")
-        do {
-            let people = try managedContext.fetch(fetchRequest)
-            for people in people {
-                let mobileNumber = (people.value(forKey: "phone") ?? "") as! String;
-                let staffname = (people.value(forKey: "member_name") ?? "") as! String;
+        if (currentSelection.name == "ebclaims") {
+            var results : [STAFF_DETAILS]
+            let studentUniversityFetchRequest: NSFetchRequest<STAFF_DETAILS>  = STAFF_DETAILS.fetchRequest()
+            studentUniversityFetchRequest.returnsObjectsAsFaults = false
+            do {
+                results = try self.managedContext.fetch(studentUniversityFetchRequest)
+                let mobileNumber = results.first!.phone ?? ""
+                let staffname = results.first!.member_name ?? ""
                 self.mobileNumber.text = " " + mobileNumber;
                 self.name.text = " " + staffname;
-                return
+            } catch let error as NSError {
+                print ("Could not fetch \(error), \(error.userInfo)")
             }
-        } catch let error as NSError {
-            print("Could not fetch. \(error), \(error.userInfo)")
+        } else if (currentSelection.name == "salary") {
+            var results : [STAFF_DETAILS_SALARY]
+            let studentUniversityFetchRequest: NSFetchRequest<STAFF_DETAILS_SALARY>  = STAFF_DETAILS_SALARY.fetchRequest()
+            studentUniversityFetchRequest.returnsObjectsAsFaults = false
+            do {
+                results = try self.managedContext.fetch(studentUniversityFetchRequest)
+                let staffname = results.first!.staffName ?? ""
+                self.name.text = " " + staffname;
+            } catch let error as NSError {
+                print ("Could not fetch \(error), \(error.userInfo)")
+            }
+        } else if (currentSelection.name == "lines") {
+            var results : [STAFF_DETAILS_LINES]
+            let studentUniversityFetchRequest: NSFetchRequest<STAFF_DETAILS_LINES>  = STAFF_DETAILS_LINES.fetchRequest()
+            studentUniversityFetchRequest.returnsObjectsAsFaults = false
+            do {
+                results = try self.managedContext.fetch(studentUniversityFetchRequest)
+                let staffname = results.first!.staffName ?? ""
+                self.name.text = " " + staffname;
+            } catch let error as NSError {
+                print ("Could not fetch \(error), \(error.userInfo)")
+            }
         }
     }
     
@@ -121,35 +139,59 @@ class PostComments: UIViewController, IndicatorInfoProvider, UITextViewDelegate,
         if ((name1?.length)! <= 0 || (subject1?.length)! <= 0 || (mobile1?.length)! <= 0 || (comments2?.length)! <= 0) {
             self.showToast(message: "All fileds are mandatory")
         } else {
-            guard let appDelegate =
-                UIApplication.shared.delegate as? AppDelegate else {
-                    return
-            }
-            let managedContext =
-                appDelegate.persistentContainer.viewContext
             
-            let fetchRequest =
-                NSFetchRequest<NSManagedObject>(entityName: "STAFF_DETAILS")
-            do {
-                let people = try managedContext.fetch(fetchRequest)
-                for people in people {
-                    let staff_id = (people.value(forKey: "staff_id") ?? "") as! String;
-                    let member_id = (people.value(forKey: "member_id") ?? "") as! String;
-                    let client_id = (people.value(forKey: "client_id") ?? "") as! String;
-                    
-                    DispatchQueue.main.async(execute: {
-                        /* Do some heavy work (you are now on a background queue) */
-                        LoadingIndicatorView.show("Submitting Comments...")
-                    });
+            if (currentSelection.name == "ebclaims") {
+                var results : [STAFF_DETAILS]
+                let studentUniversityFetchRequest: NSFetchRequest<STAFF_DETAILS>  = STAFF_DETAILS.fetchRequest()
+                studentUniversityFetchRequest.returnsObjectsAsFaults = false
+                do {
+                    results = try self.managedContext.fetch(studentUniversityFetchRequest)
+                    let staff_id = results.first!.staff_id ?? ""
+                    let member_id = results.first!.member_id ?? ""
+                    let client_id = results.first!.client_id ?? ""
+                    LoadingIndicatorView.show("Submitting Comments...")
                     self.name.resignFirstResponder()
                     self.mobileNumber.resignFirstResponder()
                     self.subject.resignFirstResponder()
                     self.comments.resignFirstResponder()
-                    self.postComments(actionId: "post_comments", memberId: member_id, staffID: staff_id, clientID: client_id, phoneNumber: mobile1!, name: name1!, subject: subject1!, comments1: comments2!)
-                    return
+                    self.postComments(baseURL: constants.BASE_URL, actionId: "post_comments", memberId: member_id, staffID: staff_id, clientID: client_id, phoneNumber: mobile1!, name: name1!, subject: subject1!, comments1: comments2!)
+                } catch let error as NSError {
+                    print ("Could not fetch \(error), \(error.userInfo)")
                 }
-            } catch let error as NSError {
-                print("Could not fetch. \(error), \(error.userInfo)")
+            } else if (currentSelection.name == "salary") {
+                var results : [STAFF_DETAILS_SALARY]
+                let studentUniversityFetchRequest: NSFetchRequest<STAFF_DETAILS_SALARY>  = STAFF_DETAILS_SALARY.fetchRequest()
+                studentUniversityFetchRequest.returnsObjectsAsFaults = false
+                do {
+                    results = try self.managedContext.fetch(studentUniversityFetchRequest)
+                    let staff_id = results.first!.staffID ?? ""
+                    let client_id = results.first!.clientID ?? ""
+                    LoadingIndicatorView.show("Submitting Comments...")
+                    self.name.resignFirstResponder()
+                    self.mobileNumber.resignFirstResponder()
+                    self.subject.resignFirstResponder()
+                    self.comments.resignFirstResponder()
+                    self.postComments(baseURL: constants.BASE_URL_SALARY, actionId: "post_comments", memberId: "", staffID: staff_id, clientID: client_id, phoneNumber: mobile1!, name: name1!, subject: subject1!, comments1: comments2!)
+                } catch let error as NSError {
+                    print ("Could not fetch \(error), \(error.userInfo)")
+                }
+            } else if (currentSelection.name == "lines") {
+                var results : [STAFF_DETAILS_LINES]
+                let studentUniversityFetchRequest: NSFetchRequest<STAFF_DETAILS_LINES>  = STAFF_DETAILS_LINES.fetchRequest()
+                studentUniversityFetchRequest.returnsObjectsAsFaults = false
+                do {
+                    results = try self.managedContext.fetch(studentUniversityFetchRequest)
+                    let staff_id = results.first!.staffID ?? ""
+                    let client_id = results.first!.clientID ?? ""
+                    LoadingIndicatorView.show("Submitting Comments...")
+                    self.name.resignFirstResponder()
+                    self.mobileNumber.resignFirstResponder()
+                    self.subject.resignFirstResponder()
+                    self.comments.resignFirstResponder()
+                    self.postComments(baseURL: constants.BASE_URL_LINES, actionId: "post_comments", memberId: "", staffID: staff_id, clientID: client_id, phoneNumber: mobile1!, name: name1!, subject: subject1!, comments1: comments2!)
+                } catch let error as NSError {
+                    print ("Could not fetch \(error), \(error.userInfo)")
+                }
             }
         }
     }
@@ -158,62 +200,28 @@ class PostComments: UIViewController, IndicatorInfoProvider, UITextViewDelegate,
         return itemInfo
     }
     
-    func postComments(actionId: String, memberId: String, staffID: String, clientID: String, phoneNumber: String, name: String, subject: String, comments1: String) -> Void {
+    func postComments(baseURL: String, actionId: String, memberId: String, staffID: String, clientID: String, phoneNumber: String, name: String, subject: String, comments1: String) -> Void {
         let MemberName = name.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)!
         let Subject = subject.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)!
         let Comments = comments1.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)!
         let PhoneNumber = phoneNumber.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)!
-        let POST_PARAMS = "?action_id=" + actionId + "&mobile_no="  + PhoneNumber + "&name=" + MemberName + "&subject=" + Subject + "&staff_id=" + staffID + "&client_no=" + clientID + "&member_id="  + memberId + "&comments="  + Comments;
         
-        let urlString = constants.BASE_URL + POST_PARAMS;
-        // Create request with URL
-        let url = URL(string: urlString)!
-        var request = URLRequest(url: url, cachePolicy: .reloadIgnoringCacheData, timeoutInterval: 30)
-        request.httpMethod = "POST"
+        let endPoint: String = {
+            return "\(baseURL)?action_id=\(actionId)&mobile_no=\(PhoneNumber)&name=\(MemberName)&subject=\(Subject)&staff_id=\(staffID)&client_no=\(clientID)&member_id=\(memberId)&comments=\(Comments)"
+        }()
         
-        // Fire you request
-        let task = URLSession.shared.dataTask(with: request) { data, response, error in
-            // Do whatever you would like to
-            if (error != nil) {
-                print (error?.localizedDescription ?? "URL Error!")
-            } else {
-                if let urlContent = data {
-                    do {
-                        let parsedData = try JSONSerialization.jsonObject(with: urlContent, options: .allowFragments) as! [String:Any]
-                        let status = parsedData["status"] as! String
-                        
-                        let message = parsedData["message"] as! String
-                        
-                        if (status == "success"){
-                            self.alertDialog (heading: "", message: message);
-                        } else if (status == "fail") {
-                            DispatchQueue.main.sync(execute: {
-                                /* stop the activity indicator (you are now on the main queue again) */
-                                LoadingIndicatorView.hide()
-                            });
-                            self.alertDialog (heading: "", message: message);
-                            return
-                        } else {
-                            DispatchQueue.main.sync(execute: {
-                                /* stop the activity indicator (you are now on the main queue again) */
-                                LoadingIndicatorView.hide()
-                            });
-                            self.alertDialog (heading: "", message: self.constants.errorMessage);
-                            return
-                        }
-                        
-                    } catch {
-                        DispatchQueue.main.sync(execute: {
-                            /* stop the activity indicator (you are now on the main queue again) */
-                            LoadingIndicatorView.hide()
-                        });
-                        print("JSON processessing failed")
-                        return
-                    }//catch closing bracket
-                }// if let closing bracket
-            }//else closing bracket
-        }// task closing bracket
-        task.resume();
+        self.webserviceManager.login(type: "single", endPoint: endPoint) { (result) in
+            LoadingIndicatorView.hideInMain()
+            switch result {
+            case .SuccessSingle( _, let message):
+                self.alertDialog (heading: "", message: message);
+            case .Error(let message):
+                self.alertDialog (heading: "", message: message);
+            default:
+                self.alertDialog (heading: "", message: self.constants.errorMessage);
+                
+            }
+        }
     }
     
     func alertDialog (heading: String, message: String) {
@@ -227,8 +235,6 @@ class PostComments: UIViewController, IndicatorInfoProvider, UITextViewDelegate,
             self.mobileNumber.placeholder  = "Mobile Number"
             self.comments.text = "Comments"
             self.comments.textColor = UIColor.lightGray
-//            self.comments.selectedTextRange = self.comments.textRange(from: self.comments.beginningOfDocument, to: self.comments.beginningOfDocument)
-            LoadingIndicatorView.hide()
             let alertController = UIAlertController(title: heading, message: message, preferredStyle: .alert)
             let defaultAction = UIAlertAction(title: "OK", style: .default, handler: nil)
             alertController.addAction(defaultAction)

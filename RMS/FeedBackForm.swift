@@ -11,6 +11,7 @@ import UIKit
 
 class FeedBackForm: UIViewController, UITextViewDelegate, UITextFieldDelegate {
     let constants = Constants();
+    let webserviceManager = WebserviceManager();
     var questionChecked : Bool = false
     var suggestionChecked : Bool = false
     var problemChecked : Bool = false
@@ -65,6 +66,8 @@ class FeedBackForm: UIViewController, UITextViewDelegate, UITextFieldDelegate {
         paddingView2.frame = CGRect(x: 0, y: 0, width: 3, height: self.name.frame.size.height)
         subject.leftView = paddingView2
         subject.leftViewMode = UITextFieldViewMode.always
+        
+        hideKeyboard()
         
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
@@ -177,57 +180,23 @@ class FeedBackForm: UIViewController, UITextViewDelegate, UITextFieldDelegate {
         let Subject = subject.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)!
         let Comments = description.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)!
         let PhoneNumber = phoneNumber.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)!
-        let POST_PARAMS = "?action_id=" + actionId + "&mobile_no="  + PhoneNumber + "&name=" + MemberName + "&subject=" + Subject + "&contact_types=" + contactType + "&description=" + Comments;
         
-        let urlString = constants.BASE_URL + POST_PARAMS;
-        // Create request with URL
-        let url = URL(string: urlString)!
-        var request = URLRequest(url: url, cachePolicy: .reloadIgnoringCacheData, timeoutInterval: 30)
-        request.httpMethod = "POST"
+        let endPoint: String = {
+            return "\(constants.BASE_URL)?action_id=\(actionId)&mobile_no=\(PhoneNumber)&name=\(MemberName)&subject=\(Subject)&contact_types=\(contactType)&description=\(Comments)"
+        }()
         
-        // Fire you request
-        let task = URLSession.shared.dataTask(with: request) { data, response, error in
-            // Do whatever you would like to
-            if (error != nil) {
-                print (error?.localizedDescription ?? "URL Error!")
-            } else {
-                if let urlContent = data {
-                    do {
-                        let parsedData = try JSONSerialization.jsonObject(with: urlContent, options: .allowFragments) as! [String:Any]
-                        let status = parsedData["status"] as! String
-                        
-                        let message = parsedData["message"] as! String
-                        
-                        if (status == "success"){
-                            self.alertDialog (heading: "", message: message);
-                        } else if (status == "fail") {
-                            DispatchQueue.main.sync(execute: {
-                                /* stop the activity indicator (you are now on the main queue again) */
-                                LoadingIndicatorView.hide()
-                            });
-                            self.alertDialog (heading: "", message: message);
-                            return
-                        } else {
-                            DispatchQueue.main.sync(execute: {
-                                /* stop the activity indicator (you are now on the main queue again) */
-                                LoadingIndicatorView.hide()
-                            });
-                            self.alertDialog (heading: "", message: self.constants.errorMessage);
-                            return
-                        }
-                        
-                    } catch {
-                        DispatchQueue.main.sync(execute: {
-                            /* stop the activity indicator (you are now on the main queue again) */
-                            LoadingIndicatorView.hide()
-                        });
-                        print("JSON processessing failed")
-                        return
-                    }//catch closing bracket
-                }// if let closing bracket
-            }//else closing bracket
-        }// task closing bracket
-        task.resume();
+        self.webserviceManager.login(type: "single", endPoint: endPoint) { (result) in
+            LoadingIndicatorView.hideInMain()
+            switch result {
+            case .SuccessSingle( _, let message):
+                self.alertDialog (heading: "", message: message);
+            case .Error(let message):
+                self.alertDialog (heading: "", message: message);
+            default:
+                self.alertDialog (heading: "", message: self.constants.errorMessage);
+                
+            }
+        }
     }
     
     func alertDialog (heading: String, message: String) {
@@ -241,7 +210,18 @@ class FeedBackForm: UIViewController, UITextViewDelegate, UITextFieldDelegate {
             self.mobileNumber.placeholder  = "Mobile Number"
             self.descriptin.text = "Description"
             self.descriptin.textColor = UIColor.lightGray
-            LoadingIndicatorView.hide()
+            if (self.question.isOn) {
+                self.question.isOn = false
+            }
+            if (self.suggestion.isOn) {
+                self.suggestion.isOn = false
+            }
+            if (self.problem.isOn) {
+                self.problem.isOn = false
+            }
+            if (self.connect.isOn) {
+                self.connect.isOn = false
+            }
             let alertController = UIAlertController(title: heading, message: message, preferredStyle: .alert)
             let defaultAction = UIAlertAction(title: "OK", style: .default, handler: nil)
             alertController.addAction(defaultAction)

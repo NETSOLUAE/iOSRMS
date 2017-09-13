@@ -13,6 +13,7 @@ class TableBenifits:UIViewController, IndicatorInfoProvider, UIWebViewDelegate {
     var itemInfo: IndicatorInfo = "Table"
     let constants = Constants();
     var webView: UIWebView!
+    let webserviceManager = WebserviceManager();
     
     init(itemInfo: IndicatorInfo) {
         self.itemInfo = itemInfo
@@ -41,61 +42,24 @@ class TableBenifits:UIViewController, IndicatorInfoProvider, UIWebViewDelegate {
     }
     
     func loadPolicy(actionId: String) -> Void {
-        DispatchQueue.main.async(execute: {
-            /* Do some heavy work (you are now on a background queue) */
-            self.showActivityIndicator(view: self.webView, targetVC: self)
-        });
-        let POST_PARAMS = "?action_id=" + actionId;
+        self.showActivityIndicator(view: self.webView, targetVC: self)
         
-        let urlString = constants.BASE_URL + POST_PARAMS;
+        let endPoint: String = {
+            return "\(constants.BASE_URL)?action_id=\(actionId)"
+        }()
         
-        // Create request with URL
-        let url = URL(string: urlString)!
-        var request = URLRequest(url: url, cachePolicy: .reloadIgnoringCacheData, timeoutInterval: 30)
-        request.httpMethod = "POST"
-        
-        // Fire you request
-        let task = URLSession.shared.dataTask(with: request) { data, response, error in
-            // Do whatever you would like to
-            if (error != nil) {
-                print (error?.localizedDescription ?? "URL Error!")
-                self.alertDialog(heading: "Alert", message: error?.localizedDescription ?? self.constants.errorMessage)
-            } else {
-                if let urlContent = data {
-                    do {
-                        let parsedData = try JSONSerialization.jsonObject(with: urlContent, options: .allowFragments) as! [String:Any]
-                        let status = parsedData["status"] as! String
-                        
-                        let message = parsedData["message"] as! String
-                        
-                        if (status == "success"){
-                            let data = parsedData["data"] as! [String:Any]
-                            let contents = data["contents"] as? String ?? ""
-                            self.webView.loadHTMLString(contents, baseURL: nil)
-                        } else if (status == "fail") {
-                            self.alertDialog (heading: "", message: message);
-                            return
-                        } else {
-                            self.alertDialog (heading: "", message: self.constants.errorMessage);
-                            return
-                        }
-                        
-                    } catch {
-                        DispatchQueue.main.sync(execute: {
-                            /* stop the activity indicator (you are now on the main queue again) */
-                            self.hideActivityIndicator(view: self.webView)
-                        });
-                        print("JSON processessing failed")
-                        return
-                    }//catch closing bracket
-                }// if let closing bracket
-                DispatchQueue.main.sync(execute: {
-                    /* stop the activity indicator (you are now on the main queue again) */
-                    self.hideActivityIndicator(view: self.webView)
-                });
-            }//else closing bracket
-        }// task closing bracket
-        task.resume();
+        self.webserviceManager.login(type: "single", endPoint: endPoint) { (result) in
+            self.hideActivityIndicator(view: self.webView)
+            switch result {
+            case .SuccessSingle(let data, _):
+                let contents = data["contents"] as? String ?? ""
+                self.webView.loadHTMLString(contents, baseURL: nil)
+            case .Error(let message):
+                self.alertDialog (heading: "", message: message);
+            default:
+                self.alertDialog (heading: "", message: self.constants.errorMessage);
+            }
+        }
     }
     
     

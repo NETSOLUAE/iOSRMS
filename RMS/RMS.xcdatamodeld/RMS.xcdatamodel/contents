@@ -1,6 +1,35 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="12141" systemVersion="16E195" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
-    <entity name="CLAIM_DETAILS" representedClassName="CLAIM_DETAILS" syncable="YES" codeGenerationType="class">
+    <entity name="ACCOUNT_SUMMARY" representedClassName="ACCOUNT_SUMMARY" syncable="YES">
+        <attribute name="endDate" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="insurer" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="nationalID" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="nextInstallmentAmount" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="outstandingAmount" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="policyNo" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="policyYear" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="staffID" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="startDate" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="status" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="totalPremium" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="vehicleNumber" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="installment" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="POLICY_INSTALLMENT" inverseName="account" inverseEntity="POLICY_INSTALLMENT" syncable="YES"/>
+    </entity>
+    <entity name="ACCOUNT_SUMMARY_LINES" representedClassName="ACCOUNT_SUMMARY_LINES" syncable="YES">
+        <attribute name="endDate" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="insurer" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="nationalID" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="nextInstallmentAmount" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="outstandingAmount" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="policyNo" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="policyYear" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="staffID" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="startDate" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="status" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="totalPremium" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="vehicleNumber" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="CLAIM_DETAILS" representedClassName="CLAIM_DETAILS" syncable="YES">
         <attribute name="approved_amount" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="cheque_no" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="claim_no" optional="YES" attributeType="String" syncable="YES"/>
@@ -20,7 +49,7 @@
         <attribute name="status" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="treatment_date" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
-    <entity name="DEPENDENT_DETAILS" representedClassName="DEPENDENT_DETAILS" syncable="YES" codeGenerationType="class">
+    <entity name="DEPENDENT_DETAILS" representedClassName="DEPENDENT_DETAILS" syncable="YES">
         <attribute name="client_id" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="dender" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="effective_date" optional="YES" attributeType="String" syncable="YES"/>
@@ -32,19 +61,41 @@
         <attribute name="policy_ref" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="relationship" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="staff_id" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="staff" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="STAFF_DETAILS" inverseName="dependent" inverseEntity="STAFF_DETAILS" syncable="YES"/>
     </entity>
-    <entity name="MASTER_DATA" representedClassName="MASTER_DATA" syncable="YES" codeGenerationType="class">
+    <entity name="MASTER_DATA" representedClassName="MASTER_DATA" syncable="YES">
         <attribute name="changePin" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="clientID" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="mobileNumber" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="pin" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="staffID" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
-    <entity name="PDF" representedClassName="PDF" syncable="YES" codeGenerationType="class">
+    <entity name="MASTER_DATA_LINES" representedClassName="MASTER_DATA_LINES" syncable="YES">
+        <attribute name="changePin" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="clientID" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="nationalID" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="pin" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="staffID" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="MASTER_DATA_SALARY" representedClassName="MASTER_DATA_SALARY" syncable="YES">
+        <attribute name="changePin" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="clientID" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="nationalID" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="pin" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="staffID" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="PDF" representedClassName="PDF" syncable="YES">
         <attribute name="pdf_link" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="pdf_name" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
-    <entity name="PRE_APPROVALS" representedClassName="PRE_APPROVALS" syncable="YES" codeGenerationType="class">
+    <entity name="POLICY_INSTALLMENT" representedClassName="POLICY_INSTALLMENT" syncable="YES">
+        <attribute name="amount" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="date" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="status" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="vehicleNumber" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="account" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ACCOUNT_SUMMARY" inverseName="installment" inverseEntity="ACCOUNT_SUMMARY" syncable="YES"/>
+    </entity>
+    <entity name="PRE_APPROVALS" representedClassName="PRE_APPROVALS" syncable="YES">
         <attribute name="diagnosis" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="entry_dt" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="hospital_name" optional="YES" attributeType="String" syncable="YES"/>
@@ -59,7 +110,7 @@
         <attribute name="staff_name" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="status" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
-    <entity name="STAFF_DETAILS" representedClassName="STAFF_DETAILS" syncable="YES" codeGenerationType="class">
+    <entity name="STAFF_DETAILS" representedClassName="STAFF_DETAILS" syncable="YES">
         <attribute name="client_id" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="dender" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="effective_date" optional="YES" attributeType="String" syncable="YES"/>
@@ -71,13 +122,49 @@
         <attribute name="policy_ref" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="relationship" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="staff_id" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="dependent" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="DEPENDENT_DETAILS" inverseName="staff" inverseEntity="DEPENDENT_DETAILS" syncable="YES"/>
+    </entity>
+    <entity name="STAFF_DETAILS_LINES" representedClassName="STAFF_DETAILS_LINES" syncable="YES">
+        <attribute name="clientID" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="nationalID" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="staffID" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="staffName" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="STAFF_DETAILS_POLICY" representedClassName="STAFF_DETAILS_POLICY" syncable="YES">
+        <attribute name="endDate" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="nationalID" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="policyNo" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="staffID" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="startDate" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="STAFF_DETAILS_POLICY_LINES" representedClassName="STAFF_DETAILS_POLICY_LINES" syncable="YES">
+        <attribute name="endDate" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="nationalID" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="policyNo" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="staffID" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="startDate" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="STAFF_DETAILS_SALARY" representedClassName="STAFF_DETAILS_SALARY" syncable="YES">
+        <attribute name="clientID" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="nationalID" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="staffID" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="staffName" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
     <elements>
-        <element name="CLAIM_DETAILS" positionX="-36" positionY="126" width="128" height="315"/>
-        <element name="DEPENDENT_DETAILS" positionX="-36" positionY="99" width="128" height="210"/>
-        <element name="MASTER_DATA" positionX="-63" positionY="-18" width="128" height="120"/>
-        <element name="PDF" positionX="-18" positionY="153" width="128" height="75"/>
-        <element name="PRE_APPROVALS" positionX="-27" positionY="144" width="128" height="240"/>
-        <element name="STAFF_DETAILS" positionX="-54" positionY="18" width="128" height="210"/>
+        <element name="ACCOUNT_SUMMARY" positionX="-63" positionY="135" width="128" height="240"/>
+        <element name="CLAIM_DETAILS" positionX="45" positionY="99" width="128" height="315"/>
+        <element name="DEPENDENT_DETAILS" positionX="-117" positionY="90" width="128" height="223"/>
+        <element name="MASTER_DATA" positionX="178" positionY="-36" width="128" height="120"/>
+        <element name="MASTER_DATA_SALARY" positionX="-90" positionY="108" width="128" height="120"/>
+        <element name="PDF" positionX="-36" positionY="-18" width="128" height="75"/>
+        <element name="POLICY_INSTALLMENT" positionX="-54" positionY="144" width="128" height="120"/>
+        <element name="PRE_APPROVALS" positionX="198" positionY="99" width="128" height="240"/>
+        <element name="STAFF_DETAILS" positionX="-288" positionY="27" width="128" height="223"/>
+        <element name="STAFF_DETAILS_POLICY" positionX="-72" positionY="126" width="128" height="120"/>
+        <element name="STAFF_DETAILS_SALARY" positionX="-81" positionY="117" width="128" height="105"/>
+        <element name="STAFF_DETAILS_LINES" positionX="-81" positionY="117" width="128" height="105"/>
+        <element name="MASTER_DATA_LINES" positionX="-72" positionY="126" width="128" height="120"/>
+        <element name="STAFF_DETAILS_POLICY_LINES" positionX="-63" positionY="135" width="128" height="120"/>
+        <element name="ACCOUNT_SUMMARY_LINES" positionX="-54" positionY="144" width="128" height="225"/>
     </elements>
 </model>

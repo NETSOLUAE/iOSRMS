@@ -23,12 +23,14 @@ struct SectionContact {
 struct Address {
     var branch_name: String!
     var telephone: String!
+    var mobile: String!
     var email: String!
     var address: NSMutableAttributedString!
     
-    init(branch_name: String, address: NSMutableAttributedString, telephone: String, email: String) {
+    init(branch_name: String, address: NSMutableAttributedString, telephone: String, mobile: String, email: String) {
         self.branch_name = branch_name
         self.telephone = telephone
+        self.mobile = mobile
         self.email = email
         self.address = address
     }

@@ -14,6 +14,8 @@ class HomeController: ButtonBarPagerTabStripViewController {
     
     var isViewDidLaod = false
     let constants = Constants();
+    let sharedInstance = CoreDataManager.sharedInstance;
+    let managedContext = CoreDataManager.sharedInstance.persistentContainer.viewContext
     
     @IBAction func profileMenu(_ sender: Any) {
         self.slideMenuController()?.openLeft()
@@ -23,10 +25,6 @@ class HomeController: ButtonBarPagerTabStripViewController {
     }
     let redColor = UIColor(red: 221/255.0, green: 0/255.0, blue: 19/255.0, alpha: 1.0)
     let unselectedIconColor = UIColor(red: 73/255.0, green: 8/255.0, blue: 10/255.0, alpha: 1.0)
-    
-    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
-        super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
-    }
     
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
@@ -51,41 +49,33 @@ class HomeController: ButtonBarPagerTabStripViewController {
         
         changeCurrentIndexProgressive = {(oldCell: ButtonBarViewCell?, newCell: ButtonBarViewCell?, progressPercentage: CGFloat, changeCurrentIndex: Bool, animated: Bool) -> Void in
             guard changeCurrentIndex == true else { return }
-            oldCell?.imageView.tintColor = .white
-            newCell?.imageView.tintColor = .white
+            oldCell?.imageView.image = oldCell?.imageView.image
+            newCell?.imageView.image = newCell?.imageView.highlightedImage
         }
         isViewDidLaod = true
         super.viewDidLoad()
         navigationController?.navigationBar.shadowImage = UIImage()
         navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
+        
     }
     
     override func viewWillAppear(_ animated: Bool) {
         
         if (isViewDidLaod){
             isViewDidLaod = false
-            guard let appDelegate =
-                UIApplication.shared.delegate as? AppDelegate else {
-                    return
-            }
-            let managedContext =
-                appDelegate.persistentContainer.viewContext
-            
-            let fetchRequest =
-                NSFetchRequest<NSManagedObject>(entityName: "MASTER_DATA")
+            var results : [MASTER_DATA]
+            let studentUniversityFetchRequest: NSFetchRequest<MASTER_DATA>  = MASTER_DATA.fetchRequest()
+            studentUniversityFetchRequest.returnsObjectsAsFaults = false
             do {
-                let people = try managedContext.fetch(fetchRequest)
-                for people in people {
-                    let changePin = (people.value(forKey: "changePin") ?? "") as! String;
-                    if (changePin != "" && changePin == "Yes"){
-                        self.resetPinAlert()
-                        return
-                    }
+                results = try self.managedContext.fetch(studentUniversityFetchRequest)
+                let changePin = results.first!.changePin ?? ""
+                if (changePin != "" && changePin == "Yes"){
+                    self.resetPinAlert()
+                    return
                 }
             } catch let error as NSError {
-                print("Could not fetch. \(error), \(error.userInfo)")
+                print ("Could not fetch \(error), \(error.userInfo)")
             }
-            
         }
         
         self.slideMenuController()?.removeLeftGestures()
@@ -126,6 +116,7 @@ class HomeController: ButtonBarPagerTabStripViewController {
     public func resetPinAlert () {
          OperationQueue.main.addOperation {
             let vc = CustomAlertViewController()
+            vc.isEB = true
             self.present(vc, animated: true)
         }
     }

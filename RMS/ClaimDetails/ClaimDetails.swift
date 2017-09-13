@@ -17,6 +17,9 @@ class ClaimDetails: UITableViewController, IndicatorInfoProvider {
     var filteredCandies = [CLAIM_DETAILS]()
     let refreshControl1 = UIRefreshControl()
     let constants = Constants()
+    let webserviceManager = WebserviceManager();
+    let sharedInstance = CoreDataManager.sharedInstance;
+    let managedContext = CoreDataManager.sharedInstance.persistentContainer.viewContext
     
     init(style: UITableViewStyle, itemInfo: IndicatorInfo) {
         self.itemInfo = itemInfo
@@ -59,25 +62,16 @@ class ClaimDetails: UITableViewController, IndicatorInfoProvider {
     }
     
     func refreshClaims(refreshControl: UIRefreshControl) {
-        guard let appDelegate =
-            UIApplication.shared.delegate as? AppDelegate else {
-                return
-        }
-        let managedContext =
-            appDelegate.persistentContainer.viewContext
-        
-        let fetchRequest =
-            NSFetchRequest<NSManagedObject>(entityName: "STAFF_DETAILS")
+        var results : [STAFF_DETAILS]
+        let studentUniversityFetchRequest: NSFetchRequest<STAFF_DETAILS>  = STAFF_DETAILS.fetchRequest()
+        studentUniversityFetchRequest.returnsObjectsAsFaults = false
         do {
-            let people = try managedContext.fetch(fetchRequest)
-            for people in people {
-                let staff_id = (people.value(forKey: "staff_id") ?? "") as! String;
-                let client_id = (people.value(forKey: "client_id") ?? "") as! String;
-                self.claimDetails(actionId: "claim_status", staffID: staff_id, clientID: client_id)
-                return
-            }
+            results = try self.managedContext.fetch(studentUniversityFetchRequest)
+            let staffID = results.first!.staff_id ?? ""
+            let clientID = results.first!.client_id ?? ""
+            self.claimDetails(actionId: "claim_status", staffID: staffID, clientID: clientID)
         } catch let error as NSError {
-            print("Could not fetch. \(error), \(error.userInfo)")
+            print ("Could not fetch \(error), \(error.userInfo)")
         }
     }
     
@@ -105,7 +99,7 @@ class ClaimDetails: UITableViewController, IndicatorInfoProvider {
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: "member_name", ascending: false)]
         
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
-        let managerContext = appDelegate.persistentContainer.viewContext
+        let managerContext = self.sharedInstance.persistentContainer.viewContext
         
         // Create Fetched Results Controller
         let fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: managerContext, sectionNameKeyPath: nil, cacheName: nil)
@@ -214,11 +208,6 @@ class ClaimDetails: UITableViewController, IndicatorInfoProvider {
     
     func filterContentForSearchText(searchText: String, scope: String = "All") {
         var locations  = [CLAIM_DETAILS]() // Where Locations = your NSManaged Class
-        guard let appDelegate =
-            UIApplication.shared.delegate as? AppDelegate else {
-              return
-        }
-        let managedContext = appDelegate.persistentContainer.viewContext
         
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "CLAIM_DETAILS")
         do {
@@ -233,158 +222,26 @@ class ClaimDetails: UITableViewController, IndicatorInfoProvider {
     }
     
     func claimDetails(actionId: String, staffID: String, clientID: String) -> Void {
-        let POST_PARAMS = "?action_id=" + actionId + "&staff_id=" + staffID + "&client_no=" + clientID;
         
-        let urlString = constants.BASE_URL + POST_PARAMS;
+        let endPoint: String = {
+            return "\(constants.BASE_URL)?action_id=\(actionId)&staff_id=\(staffID)&client_no=\(clientID)"
+        }()
         
-        // Create request with URL
-        let url = URL(string: urlString)!
-        var request = URLRequest(url: url, cachePolicy: .reloadIgnoringCacheData, timeoutInterval: 30)
-        request.httpMethod = "GET"
-        
-        // Fire you request
-        let task = URLSession.shared.dataTask(with: request) { data, response, error in
-            // Do whatever you would like to
-            if (error != nil) {
-                print (error?.localizedDescription ?? "URL Error!")
-            } else {
-                if let urlContent = data {
-                    do {
-                        let parsedData = try JSONSerialization.jsonObject(with: urlContent, options: .allowFragments) as! [String:Any]
-                        let status = parsedData["status"] as! String
-                        let require_update = parsedData["require_update"] as! String
-                        
-                        if (status == "success"){
-                            if (require_update == "yes") {
-                                self.deleteUser ()
-                                let data = parsedData["data"] as! [[String:Any]]
-                                for data in data {
-                                    let claim_no = data["claim_no"] as? String ?? ""
-                                    let reg_date = data["reg_date"] as? String ?? ""
-                                    let member_name = data["member_name"] as? String ?? ""
-                                    let staff_name = data["staff_name"] as? String ?? ""
-                                    let treatment_date = data["treatment_date"] as? String ?? ""
-                                    let status = data["status"] as? String ?? ""
-                                    let member_type = data["member_type"] as? String ?? ""
-                                    let claimed_mount = data["amount"] as? String ?? ""
-                                    let approved_amount = data["payment"] as? String ?? ""
-                                    let excess = data["excess"] as? String ?? ""
-                                    let disallowance = data["disallowance"] as? String ?? ""
-                                    let settled_amount_ro = data["ref_amnt"] as? String ?? ""
-                                    let mode_of_payment = data["mode_of_payment"] as? String ?? ""
-                                    let cheque_no = data["cheque_no"] as? String ?? ""
-                                    let settled_amount = data["cheque_rec_date"] as? String ?? ""
-                                    let remarks = data["remarks"] as? String ?? ""
-                                    let policy_no = data["policy_no"] as? String ?? ""
-                                    let diagnosis = data["diagnosis"] as? String ?? ""
-                                    self.saveClaimDetails(claim_no: claim_no, reg_date: reg_date, member_name: member_name, staff_name: staff_name, treatment_date: treatment_date,
-                                                          status: status, member_type: member_type, claimed_mount: claimed_mount, approved_amount: approved_amount, excess: excess, disallowance: disallowance, settled_amount_ro: settled_amount_ro, mode_of_payment: mode_of_payment, cheque_no: cheque_no, settled_amount: settled_amount, remarks: remarks, policy_no: policy_no, diagnosis: diagnosis)
-                                }
-                                self.tableView.reloadData()
-                                self.refreshControl1.endRefreshing()
-                                return
-                            } else {
-                                //Delete Core Data Details
-                                self.tableView.reloadData()
-                                self.refreshControl1.endRefreshing()
-                                return
-                            }
-                        } else if (status == "fail") {
-                            self.alertDialog (heading: "", message: self.constants.errorMessage);
-                            return
-                        } else {
-                            self.alertDialog (heading: "", message: self.constants.errorMessage);
-                            return
-                        }
-                        
-                    } catch {
-                        self.alertDialog (heading: "", message: self.constants.errorMessage);
-                        print("JSON processessing failed")
-                        return
-                    }//catch closing bracket
-                }// if let closing bracket
-            }//else closing bracket
-        }// task closing bracket
-        task.resume();
-    }
-    
-    func saveClaimDetails(claim_no: String, reg_date: String, member_name: String, staff_name: String, treatment_date: String, status: String, member_type: String, claimed_mount: String,
-                          approved_amount: String, excess: String, disallowance: String, settled_amount_ro: String, mode_of_payment: String, cheque_no: String, settled_amount: String, remarks: String, policy_no: String, diagnosis: String) {
-        
-        guard let appDelegate =
-            UIApplication.shared.delegate as? AppDelegate else {
-                return
-        }
-        let managedContext =
-            appDelegate.persistentContainer.viewContext
-        let master_data =
-            NSEntityDescription.entity(forEntityName: "CLAIM_DETAILS",
-                                       in: managedContext)!
-        
-        let data = NSManagedObject(entity: master_data,
-                                   insertInto: managedContext)
-        data.setValue(claim_no, forKeyPath: "claim_no")
-        data.setValue(reg_date, forKeyPath: "reg_date")
-        data.setValue(member_name, forKeyPath: "member_name")
-        data.setValue(staff_name, forKeyPath: "staff_name")
-        data.setValue(treatment_date, forKeyPath: "treatment_date")
-        data.setValue(status, forKeyPath: "status")
-        data.setValue(member_type, forKeyPath: "member_type")
-        data.setValue(claimed_mount, forKeyPath: "claimed_mount")
-        data.setValue(approved_amount, forKeyPath: "approved_amount")
-        data.setValue(excess, forKeyPath: "excess")
-        data.setValue(disallowance, forKeyPath: "disallowance")
-        data.setValue(settled_amount_ro, forKeyPath: "settled_amount_ro")
-        data.setValue(mode_of_payment, forKeyPath: "mode_of_payment")
-        data.setValue(cheque_no, forKeyPath: "cheque_no")
-        data.setValue(settled_amount, forKeyPath: "settled_amount")
-        data.setValue(remarks, forKeyPath: "remarks")
-        data.setValue(policy_no, forKeyPath: "policy_no")
-        data.setValue(diagnosis, forKeyPath: "diagnosis")
-        let moc = NSManagedObjectContext(concurrencyType:.mainQueueConcurrencyType)
-        let privateMOC = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
-        privateMOC.parent = moc
-        
-        privateMOC.perform({
-            do {
-                try privateMOC.save()
-            } catch let error as NSError {
-                print("Could not save. \(error), \(error.userInfo)")
+        self.webserviceManager.login(type: "double", endPoint: endPoint) { (result) in
+            LoadingIndicatorView.hideInMain()
+            switch result {
+            case .Success(let data, let require_update):
+                if (require_update == "yes") {
+                    self.sharedInstance.clearClaimDetails()
+                    self.sharedInstance.saveInClaimDataWith(array: [data])
+                }
+                self.tableView.reloadData()
+                self.refreshControl1.endRefreshing()
+            case .Error(let message):
+                self.alertDialog (heading: "", message: message);
+            default:
+                self.alertDialog (heading: "", message: self.constants.errorMessage);
             }
-        })
-    }
-    
-    func deleteUser () {
-        guard let appDelegate =
-            UIApplication.shared.delegate as? AppDelegate else {
-                return
-        }
-        let context = appDelegate.persistentContainer.viewContext
-        
-        //create a fetch request, telling it about the entity
-        let fetchRequest: NSFetchRequest<CLAIM_DETAILS> = CLAIM_DETAILS.fetchRequest()
-        
-        do {
-            //go get the results
-            let array_users = try context.fetch(fetchRequest)
-            
-            //You need to convert to NSManagedObject to use 'for' loops
-            for user in array_users as [NSManagedObject] {
-                //get the Key Value pairs (although there may be a better way to do that...
-                context.delete(user)
-            }
-            //save the context
-            
-            do {
-                try context.save()
-            } catch let error as NSError  {
-                print("Could not save \(error), \(error.userInfo)")
-            } catch {
-                
-            }
-            
-        } catch {
-            print("Error with request: \(error)")
         }
     }
     

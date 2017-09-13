@@ -41,7 +41,7 @@ open class ButtonBarPagerTabStripViewController: PagerTabStripViewController, Pa
         buttonBarItemSpec = .nibFile(nibName: "ButtonBar", bundle: Bundle(for: ButtonBarViewCell.self), width: { [weak self] (childItemInfo) -> CGFloat in
             let label = UILabel()
             label.translatesAutoresizingMaskIntoConstraints = false
-            label.font = self?.settings.style.buttonBarItemFont
+            label.font = UIFont.systemFont(ofSize: 10)
             label.text = childItemInfo.title
 //            let labelSize = label.intrinsicContentSize
             let buttonBarWidth = self?.settings.style.buttonBarWidth ?? 80
@@ -182,8 +182,10 @@ open class ButtonBarPagerTabStripViewController: PagerTabStripViewController, Pa
             let newIndexPath = IndexPath(item: currentIndex, section: 0)
             
             let cells = cellForItems(at: [oldIndexPath, newIndexPath], reloadIfNotVisible: collectionViewDidLoad)
+
             changeCurrentIndexProgressive(cells.first!, cells.last!, progressPercentage, indexWasChanged, true)
         }
+        
     }
     
     private func cellForItems(at indexPaths: [IndexPath], reloadIfNotVisible reload: Bool = true) -> [ButtonBarViewCell?] {
@@ -217,7 +219,6 @@ open class ButtonBarPagerTabStripViewController: PagerTabStripViewController, Pa
     
     open func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         guard indexPath.item != currentIndex else { return }
-        
         buttonBarView.moveTo(index: indexPath.item, animated: true, swipeDirection: .none, pagerScroll: .yes)
         shouldUpdateButtonBarView = false
         
@@ -240,6 +241,8 @@ open class ButtonBarPagerTabStripViewController: PagerTabStripViewController, Pa
             isHomeViewDidLoad = !isHomeViewDidLoad
             buttonBarView.reloadItems(at: [oldIndexPath])
         }
+        buttonBarView.reloadItems(at: [oldIndexPath])
+        didSelect = true
         moveToViewController(at: indexPath.item)
     }
     
@@ -260,7 +263,7 @@ open class ButtonBarPagerTabStripViewController: PagerTabStripViewController, Pa
         let indicatorInfo = childController.indicatorInfo(for: self)
         
         cell.label.text = indicatorInfo.title
-        cell.label.font = settings.style.buttonBarItemFont
+        cell.label.font = UIFont.systemFont(ofSize: 10)
         cell.label.textColor = settings.style.buttonBarItemTitleColor 
         cell.contentView.backgroundColor = settings.style.buttonBarItemBackgroundColor ?? cell.contentView.backgroundColor
         cell.backgroundColor = settings.style.buttonBarItemBackgroundColor ?? cell.backgroundColor
@@ -279,9 +282,15 @@ open class ButtonBarPagerTabStripViewController: PagerTabStripViewController, Pa
         configureCell(cell, indicatorInfo: indicatorInfo)
         
         if pagerBehaviour.isProgressiveIndicator {
-            if let changeCurrentIndexProgressive = changeCurrentIndexProgressive {
-                changeCurrentIndexProgressive(currentIndex == indexPath.item ? nil : cell, currentIndex == indexPath.item ? cell : nil, 1, true, false)
+            
+            changeCurrentIndexProgressive = {(oldCell: ButtonBarViewCell?, newCell: ButtonBarViewCell?, progressPercentage: CGFloat, changeCurrentIndex: Bool, animated: Bool) -> Void in
+                guard changeCurrentIndex == true else { return }
+                oldCell?.imageView.image = indicatorInfo.image
+                newCell?.imageView.image = indicatorInfo.highlightedImage
             }
+//            if let changeCurrentIndexProgressive = changeCurrentIndexProgressive {
+//                changeCurrentIndexProgressive(currentIndex == indexPath.item ? nil : cell, currentIndex == indexPath.item ? cell : nil, 1, true, false)
+//            }
         } else {
             if let changeCurrentIndex = changeCurrentIndex {
                 changeCurrentIndex(currentIndex == indexPath.item ? nil : cell, currentIndex == indexPath.item ? cell : nil, false)
@@ -347,6 +356,7 @@ open class ButtonBarPagerTabStripViewController: PagerTabStripViewController, Pa
     
     private var shouldUpdateButtonBarView = true
     private var collectionViewDidLoad = false
+    private var didSelect = false
     var isHomeViewDidLoad = false
     
 }

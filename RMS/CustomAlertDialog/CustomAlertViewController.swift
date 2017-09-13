@@ -10,8 +10,12 @@ import UIKit
 import CoreData
 
 class CustomAlertViewController : UIViewController, UITextFieldDelegate {
+    var isEB = false;
     let transitioner = CAVTransitioner()
     let constants = Constants();
+    let sharedInstance = CoreDataManager.sharedInstance;
+    let webserviceManager = WebserviceManager();
+    let managedContext = CoreDataManager.sharedInstance.persistentContainer.viewContext
     
     override init(nibName: String?, bundle: Bundle?) {
         super.init(nibName: nibName, bundle: bundle)
@@ -21,6 +25,7 @@ class CustomAlertViewController : UIViewController, UITextFieldDelegate {
     @IBOutlet weak var oldPin: UITextField!
     @IBOutlet weak var confirmPin: UITextField!
     @IBOutlet weak var newPin: UITextField!
+    @IBOutlet weak var heading: UILabel!
     
     convenience init() {
         self.init(nibName:nil, bundle:nil)
@@ -39,218 +44,255 @@ class CustomAlertViewController : UIViewController, UITextFieldDelegate {
         oldPin.delegate = self;
         confirmPin.delegate = self;
         newPin.delegate = self;
+        
+        if (isEB) {
+            heading.text = "Reset Password"
+            oldPin.placeholder = "Enter Your Old Password"
+            confirmPin.placeholder = "Confirm Your New Password"
+            newPin.placeholder = "Enter Your New Password"
+        }
+        
+        hideKeyboard()
         // Do any additional setup after loading the view, typically from a nib.
+    }
+
+    func textFieldShouldReturn(_ scoreText: UITextField) -> Bool {
+        self.view.endEditing(true)
+        return true
     }
     
     func textField(_ oldPin: UITextField, shouldChangeCharactersIn range: NSRange,
                    replacementString string: String) -> Bool
     {
-        let maxLength = 4
-        let currentString: NSString = oldPin.text! as NSString
-        let newString: NSString =
-            currentString.replacingCharacters(in: range, with: string) as NSString
-        return newString.length <= maxLength
+        if (!isEB) {
+            let maxLength = 4
+            let currentString: NSString = oldPin.text! as NSString
+            let newString: NSString =
+                currentString.replacingCharacters(in: range, with: string) as NSString
+            return newString.length <= maxLength
+        } else {
+            return ((oldPin.text?.length) != nil)
+        }
     }
     
     func textField1(_ confirmPin: UITextField, shouldChangeCharactersIn range: NSRange,
                    replacementString string: String) -> Bool
     {
-        let maxLength = 4
-        let currentString: NSString = confirmPin.text! as NSString
-        let newString: NSString =
-            currentString.replacingCharacters(in: range, with: string) as NSString
-        return newString.length <= maxLength
+        if (!isEB) {
+            let maxLength = 4
+            let currentString: NSString = confirmPin.text! as NSString
+            let newString: NSString =
+                currentString.replacingCharacters(in: range, with: string) as NSString
+            return newString.length <= maxLength
+        } else {
+            return ((confirmPin.text?.length) != nil)
+        }
     }
     
     func textField2(_ newPin: UITextField, shouldChangeCharactersIn range: NSRange,
                    replacementString string: String) -> Bool
     {
-        let maxLength = 4
-        let currentString: NSString = newPin.text! as NSString
-        let newString: NSString =
-            currentString.replacingCharacters(in: range, with: string) as NSString
-        return newString.length <= maxLength
+        if (!isEB) {
+            let maxLength = 4
+            let currentString: NSString = newPin.text! as NSString
+            let newString: NSString =
+                currentString.replacingCharacters(in: range, with: string) as NSString
+            return newString.length <= maxLength
+        } else {
+            return ((newPin.text?.length) != nil)
+        }
     }
     
     @IBAction func resetPin(_ sender: Any) {
-        
-        DispatchQueue.main.async(execute: {
-            /* Do some heavy work (you are now on a background queue) */
+        self.oldPin.resignFirstResponder()
+        self.confirmPin.resignFirstResponder()
+        self.newPin.resignFirstResponder()
+        if (isEB) {
+            LoadingIndicatorView.show("Reseting Password...")
+        } else {
             LoadingIndicatorView.show("Reseting Pin...")
-        });
-        do {
-            guard let appDelegate =
-                UIApplication.shared.delegate as? AppDelegate else {
-                    return
-            }
-            let managedContext =
-                appDelegate.persistentContainer.viewContext
-            let fetchRequest =
-                NSFetchRequest<NSManagedObject>(entityName: "MASTER_DATA")
-            let people = try managedContext.fetch(fetchRequest)
-            for people in people {
-                let mobileNumber = (people.value(forKey: "mobileNumber") ?? "") as! String;
-                let staffID = (people.value(forKey: "staffID") ?? "") as! String;
-                let clientID = (people.value(forKey: "clientID") ?? "") as! String;
-                let pinText = (people.value(forKey: "pin") ?? "") as! String;
-                let oldPinText = oldPin.text
-                let newPinText = newPin.text
-                let confirmNewPinText = confirmPin.text
+        }
+        if (currentSelection.name == "ebclaims") {
+            var results : [MASTER_DATA]
+            let masterDataFetchRequest: NSFetchRequest<MASTER_DATA>  = MASTER_DATA.fetchRequest()
+            masterDataFetchRequest.returnsObjectsAsFaults = false
+            do {
+                results = try managedContext.fetch(masterDataFetchRequest)
+                let mobileNumber = results.first!.mobileNumber ?? ""
+                let staffID = results.first!.staffID ?? ""
+                let clientID = results.first!.clientID ?? ""
+                let pinText = results.first!.pin ?? ""
+                let oldPinText = oldPin.text ?? ""
+                let newPinText = newPin.text ?? ""
+                let confirmNewPinText = confirmPin.text ?? ""
                 if (pinText != "" && pinText == oldPinText) {
-                    if (newPinText?.length == 4 && confirmNewPinText?.length == 4){
+                    if (newPinText.length == 4 && confirmNewPinText.length == 4){
                         if (newPinText != oldPinText) {
                             if (newPinText == confirmNewPinText) {
                                 if (mobileNumber != "" && staffID != ""  && clientID != "" ){
-                                    resetPinCall(actionId: "reset_pin", phoneNumber: mobileNumber, pin: confirmNewPinText!, deviceID: constants.deviceID, staffID: staffID, clientID: clientID)
+                                    resetPinCall(actionId: "reset_pin_new", phoneNumber: mobileNumber, pin: confirmNewPinText, deviceID: constants.deviceID, staffID: staffID, clientID: clientID)
                                     return
                                 } else {
-                                    DispatchQueue.main.sync(execute: {
-                                        /* stop the activity indicator (you are now on the main queue again) */
-                                        LoadingIndicatorView.hide()
-                                    });
+                                    LoadingIndicatorView.hideInMain()
                                     return
                                 }
                             } else {
-                                DispatchQueue.main.sync(execute: {
-                                    /* stop the activity indicator (you are now on the main queue again) */
-                                    LoadingIndicatorView.hide()
-                                });
-                                self.showToast(message: "New PIN and Confirm PIN does not match")
+                                LoadingIndicatorView.hideInMain()
+                                self.showToast(message: "New Password and Confirm Password does not match")
                                 return
-                                //New PIN and Confirm PIN does not match
                             }
                         } else {
-                            DispatchQueue.main.sync(execute: {
-                                /* stop the activity indicator (you are now on the main queue again) */
-                                LoadingIndicatorView.hide()
-                            });
+                            LoadingIndicatorView.hideInMain()
+                            self.showToast(message: "Your OLD Password and New Password should not be same")
+                            return
+                        }
+                    } else {
+                        LoadingIndicatorView.hideInMain()
+                        self.showToast(message: "Please Enter valid Password")
+                        return
+                    }
+                } else {
+                    LoadingIndicatorView.hideInMain()
+                    self.showToast(message: "Please check your OLD Password")
+                    return
+                }
+            } catch let error as NSError {
+                print ("Could not fetch \(error), \(error.userInfo)")
+            }
+        } else if (currentSelection.name == "salary") {
+            
+            var results : [MASTER_DATA_SALARY]
+            let masterDataFetchRequest: NSFetchRequest<MASTER_DATA_SALARY>  = MASTER_DATA_SALARY.fetchRequest()
+            masterDataFetchRequest.returnsObjectsAsFaults = false
+            do {
+                results = try managedContext.fetch(masterDataFetchRequest)
+                let nationalID = results.first!.nationalID ?? ""
+                let staffID = results.first!.staffID ?? ""
+                let clientID = results.first!.clientID ?? ""
+                let pinText = results.first!.pin ?? ""
+                let oldPinText = oldPin.text ?? ""
+                let newPinText = newPin.text ?? ""
+                let confirmNewPinText = confirmPin.text ?? ""
+                if (pinText != "" && pinText == oldPinText) {
+                    if (newPinText.length == 4 && confirmNewPinText.length == 4){
+                        if (newPinText != oldPinText) {
+                            if (newPinText == confirmNewPinText) {
+                                if (nationalID != "" && staffID != ""  && clientID != "" ){
+                                    resetPinCall(actionId: "reset_pin", phoneNumber: nationalID, pin: confirmNewPinText, deviceID: constants.deviceID, staffID: staffID, clientID: clientID)
+                                    return
+                                } else {
+                                    LoadingIndicatorView.hideInMain()
+                                    return
+                                }
+                            } else {
+                                LoadingIndicatorView.hideInMain()
+                                self.showToast(message: "New PIN and Confirm PIN does not match")
+                                return
+                            }
+                        } else {
+                            LoadingIndicatorView.hideInMain()
                             self.showToast(message: "Your OLD Pin and New PIN should not be same")
                             return
                         }
-                        
                     } else {
-                        DispatchQueue.main.sync(execute: {
-                            /* stop the activity indicator (you are now on the main queue again) */
-                            LoadingIndicatorView.hide()
-                        });
-                        self.showToast(message: "Please Enter valid PIN Alert")
+                        LoadingIndicatorView.hideInMain()
+                        self.showToast(message: "Please Enter valid PIN")
                         return
-                        //Please Enter valid PIN Alert
                     }
                 } else {
-                    DispatchQueue.main.sync(execute: {
-                        /* stop the activity indicator (you are now on the main queue again) */
-                        LoadingIndicatorView.hide()
-                    });
-                    self.showToast(message: "Please check your OLD PIN Alert")
+                    LoadingIndicatorView.hideInMain()
+                    self.showToast(message: "Please check your OLD PIN")
                     return
-                    //Please check your OLD PIN Alert
                 }
+            } catch let error as NSError {
+                print ("Could not fetch \(error), \(error.userInfo)")
             }
-        } catch let error as NSError {
-            print("Could not fetch. \(error), \(error.userInfo)")
+        } else if (currentSelection.name == "lines") {
+            
+            var results : [MASTER_DATA_LINES]
+            let masterDataFetchRequest: NSFetchRequest<MASTER_DATA_LINES>  = MASTER_DATA_LINES.fetchRequest()
+            masterDataFetchRequest.returnsObjectsAsFaults = false
+            do {
+                results = try managedContext.fetch(masterDataFetchRequest)
+                let nationalID = results.first!.nationalID ?? ""
+                let staffID = results.first!.staffID ?? ""
+                let clientID = results.first!.clientID ?? ""
+                let pinText = results.first!.pin ?? ""
+                let oldPinText = oldPin.text ?? ""
+                let newPinText = newPin.text ?? ""
+                let confirmNewPinText = confirmPin.text ?? ""
+                if (pinText != "" && pinText == oldPinText) {
+                    if (newPinText.length == 4 && confirmNewPinText.length == 4){
+                        if (newPinText != oldPinText) {
+                            if (newPinText == confirmNewPinText) {
+                                if (nationalID != "" && staffID != ""  && clientID != "" ){
+                                    resetPinCall(actionId: "reset_pin", phoneNumber: nationalID, pin: confirmNewPinText, deviceID: constants.deviceID, staffID: staffID, clientID: clientID)
+                                    return
+                                } else {
+                                    LoadingIndicatorView.hideInMain()
+                                    return
+                                }
+                            } else {
+                                LoadingIndicatorView.hideInMain()
+                                self.showToast(message: "New PIN and Confirm PIN does not match")
+                                return
+                            }
+                        } else {
+                            LoadingIndicatorView.hideInMain()
+                            self.showToast(message: "Your OLD Pin and New PIN should not be same")
+                            return
+                        }
+                    } else {
+                        LoadingIndicatorView.hideInMain()
+                        self.showToast(message: "Please Enter valid PIN")
+                        return
+                    }
+                } else {
+                    LoadingIndicatorView.hideInMain()
+                    self.showToast(message: "Please check your OLD PIN")
+                    return
+                }
+            } catch let error as NSError {
+                print ("Could not fetch \(error), \(error.userInfo)")
+            }
         }
     }
     
     func resetPinCall(actionId: String, phoneNumber: String, pin: String, deviceID: String, staffID: String, clientID: String) -> Void {
-        
-        let POST_PARAMS = "?action_id=" + actionId + "&mobile_no="  + phoneNumber + "&new_pin_code=" + pin + "&device_id=" + deviceID + "&staff_id=" + staffID + "&client_no=" + clientID;
-        
-        let urlString = constants.BASE_URL + POST_PARAMS;
-        
-        // Create request with URL
-        let url = URL(string: urlString)!
-        var request = URLRequest(url: url, cachePolicy: .reloadIgnoringCacheData, timeoutInterval: 30)
-        request.httpMethod = "POST"
-        
-        // Fire you request
-        let task = URLSession.shared.dataTask(with: request) { data, response, error in
-            // Do whatever you would like to
-            if (error != nil) {
-                print (error?.localizedDescription ?? "URL Error!")
-            } else {
-                if let urlContent = data {
-                    do {
-                        let parsedData = try JSONSerialization.jsonObject(with: urlContent, options: .allowFragments) as! [String:Any]
-                        let status = parsedData["status"] as! String
-                        
-                        let message = parsedData["message"] as! String
-                        
-                        if (status == "success"){
-                            
-                            let data = parsedData["data"] as! [String:Any]
-                            for (_, _) in data {
-                                let staffID = data["staff_id"] as? String ?? ""
-                                let clientID = data["client_no"] as? String ?? ""
-                                let change_pin = data["change_pin"] as? String ?? ""
-                                self.save(phoneNumber: phoneNumber, changePin: change_pin, staffID: staffID, clientID: clientID, newPin: pin)
-                                DispatchQueue.main.sync(execute: {
-                                    /* stop the activity indicator (you are now on the main queue again) */
-                                    LoadingIndicatorView.hide()
-                                });
-                                self.presentingViewController?.dismiss(animated: true)
-                                self.alertDialog1(heading: "",message: message)
-                                return
-                            }
-                        } else if (status == "fail") {
-                            DispatchQueue.main.sync(execute: {
-                                /* stop the activity indicator (you are now on the main queue again) */
-                                LoadingIndicatorView.hide()
-                            });
-                            self.presentingViewController?.dismiss(animated: true)
-                            self.showToast(message: message)
-//                            self.alertDialog (heading: "", message: message);
-                            return
-                        } else {
-                            DispatchQueue.main.sync(execute: {
-                                /* stop the activity indicator (you are now on the main queue again) */
-                                LoadingIndicatorView.hide()
-                            });
-                            self.showToast(message: self.constants.errorMessage)
-                            self.presentingViewController?.dismiss(animated: true)
-//                            self.alertDialog (heading: "", message: self.constants.errorMessage);
-                            return
-                        }
-                        
-                    } catch {
-                        DispatchQueue.main.sync(execute: {
-                            /* stop the activity indicator (you are now on the main queue again) */
-                            LoadingIndicatorView.hide()
-                        });
-                        self.showToast(message: self.constants.errorMessage)
-                        self.presentingViewController?.dismiss(animated: true)
-                        print("JSON processessing failed")
-                        return
-                    }//catch closing bracket
-                }// if let closing bracket
-            }//else closing bracket
-        }// task closing bracket
-        task.resume();
-    }
-    
-    func save(phoneNumber: String, changePin: String, staffID: String, clientID: String, newPin: String) {
-        
-        guard let appDelegate =
-            UIApplication.shared.delegate as? AppDelegate else {
-                return
+        var params = ""
+        if (currentSelection.name == "ebclaims") {
+            params = "\(constants.BASE_URL)?action_id=\(actionId)&mobile_no=\(phoneNumber)&";
+        } else if (currentSelection.name == "salary") {
+            params = "\(constants.BASE_URL_SALARY)?action_id=\(actionId)&national_id=\(phoneNumber)&";
+        } else if (currentSelection.name == "lines") {
+            params = "\(constants.BASE_URL_LINES)?action_id=\(actionId)&national_id=\(phoneNumber)&";
         }
-        let managedContext =
-            appDelegate.persistentContainer.viewContext
-        let master_data =
-            NSEntityDescription.entity(forEntityName: "MASTER_DATA",
-                                       in: managedContext)!
+        let endPoint: String = {
+            return "\(params)new_pin_code=\(pin)&device_id=\(deviceID)&staff_id=\(staffID)&client_no=\(clientID)"
+        }()
         
-        let data = NSManagedObject(entity: master_data,
-                                   insertInto: managedContext)
-        data.setValue(newPin, forKeyPath: "pin")
-        data.setValue(phoneNumber, forKeyPath: "mobileNumber")
-        data.setValue(changePin, forKeyPath: "changePin")
-        data.setValue(staffID, forKeyPath: "staffID")
-        data.setValue(clientID, forKeyPath: "clientID")
-        do {
-            try managedContext.save()
-        } catch let error as NSError {
-            print("Could not save. \(error), \(error.userInfo)")
+        self.webserviceManager.login(type: "single", endPoint: endPoint) { (result) in
+            self.presentingViewController?.dismiss(animated: true)
+            switch result {
+            case .SuccessSingle(let data, let message):
+                if (currentSelection.name == "ebclaims") {
+                    self.sharedInstance.clearMasterData()
+                    self.sharedInstance.saveInMasterDataWith(phoneNumber: phoneNumber, pin: pin, array: [data])
+                } else if (currentSelection.name == "salary") {
+                    self.sharedInstance.clearMasterDataSalary()
+                    self.sharedInstance.saveInMasterDataSalaryWith(nationalId: phoneNumber, pin: pin, array: [data])
+                } else if (currentSelection.name == "lines") {
+                    self.sharedInstance.clearMasterDataLines()
+                    self.sharedInstance.saveInMasterDataLinesWith(nationalId: phoneNumber, pin: pin, array: [data])
+                }
+                self.alertDialog1(heading: "",message: message)
+            case .Error(let message):
+                LoadingIndicatorView.hideInMain()
+                self.alertDialog1(heading: "",message: message)
+            default:
+                self.showToast(message: self.constants.errorMessage)
+                LoadingIndicatorView.hideInMain()
+            }
         }
     }
     
