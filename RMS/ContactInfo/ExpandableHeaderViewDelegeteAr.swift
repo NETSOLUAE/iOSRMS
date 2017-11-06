@@ -40,6 +40,7 @@ class ExpandableHeaderViewAr: UITableViewHeaderFooterView {
         super.layoutSubviews()
         self.textLabel?.textColor = UIColor.black
         self.textLabel?.textAlignment = NSTextAlignment.right
+        self.textLabel?.font = UIFont.systemFont(ofSize: 14.0)
         contentView.backgroundColor = UIColor.white
     }
     

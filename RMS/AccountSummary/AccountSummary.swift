@@ -37,7 +37,7 @@ class AccountSummary: UIViewController, IndicatorInfoProvider {
         self.tableView1.backgroundColor = .white
         self.tableView1.preservesSuperviewLayoutMargins = false
         self.tableView1.layoutMargins = UIEdgeInsets.zero
-        self.tableView1.separatorInset = UIEdgeInsets.init(top: 0, left: 5, bottom: 0, right: 5)
+        self.tableView1.separatorInset = UIEdgeInsets.init(top: 0, left: 10, bottom: 0, right: 10)
         self.tableView1.tableFooterView = UIView (frame: CGRect.zero)
         
         searchController.searchResultsUpdater = self as UISearchResultsUpdating
@@ -61,28 +61,46 @@ class AccountSummary: UIViewController, IndicatorInfoProvider {
     }
     
     func refreshClaims(refreshControl: UIRefreshControl) {
+        if searchController.isActive && searchController.searchBar.text != "" {
+            self.searchController.dismiss(animated: false) {
+                // Do what you want here like perform segue or present
+                self.searchController.searchBar.text = ""
+                self.searchController.searchBar.showsCancelButton = false
+            }
+        }
         if (currentSelection.name == "salary") {
-            var results : [ACCOUNT_SUMMARY]
-            let studentUniversityFetchRequest: NSFetchRequest<ACCOUNT_SUMMARY>  = ACCOUNT_SUMMARY.fetchRequest()
-            studentUniversityFetchRequest.returnsObjectsAsFaults = false
+            let managedContext =
+                sharedInstance.persistentContainer.viewContext
+            
+            let fetchRequest =
+                NSFetchRequest<NSManagedObject>(entityName: "STAFF_DETAILS_SALARY")
             do {
-                results = try self.managedContext.fetch(studentUniversityFetchRequest)
-                let nationalID = results.first!.nationalID ?? ""
-                self.accountSummary(actionId: "vehicles", nationalId: nationalID)
+                let people = try managedContext.fetch(fetchRequest)
+                for people in people {
+                    let nationalID = (people.value(forKey: "nationalID") ?? "") as! String;
+                    self.accountSummary(actionId: "vehicles", nationalId: nationalID)
+                    return
+                }
             } catch let error as NSError {
-                print ("Could not fetch \(error), \(error.userInfo)")
+                print("Could not fetch. \(error), \(error.userInfo)")
             }
         } else if (currentSelection.name == "lines") {
-                var results : [ACCOUNT_SUMMARY_LINES]
-                let studentUniversityFetchRequest: NSFetchRequest<ACCOUNT_SUMMARY_LINES>  = ACCOUNT_SUMMARY_LINES.fetchRequest()
-                studentUniversityFetchRequest.returnsObjectsAsFaults = false
-                do {
-                    results = try self.managedContext.fetch(studentUniversityFetchRequest)
-                    let nationalID = results.first!.nationalID ?? ""
+            
+            let managedContext =
+                sharedInstance.persistentContainer.viewContext
+            
+            let fetchRequest =
+                NSFetchRequest<NSManagedObject>(entityName: "STAFF_DETAILS_LINES")
+            do {
+                let people = try managedContext.fetch(fetchRequest)
+                for people in people {
+                    let nationalID = (people.value(forKey: "nationalID") ?? "") as! String;
                     self.accountSummary(actionId: "vehicles", nationalId: nationalID)
-                } catch let error as NSError {
-                    print ("Could not fetch \(error), \(error.userInfo)")
+                    return
                 }
+            } catch let error as NSError {
+                print("Could not fetch. \(error), \(error.userInfo)")
+            }
         }
     }
     
@@ -321,9 +339,28 @@ extension AccountSummary : UITableViewDelegate {
                 vehicleDetialsView.vehicleNumber.text = accountSummary.vehicleNumber ?? ""
                 vehicleDetialsView.expDate.text = accountSummary.endDate ?? ""
                 vehicleDetialsView.status.text = accountSummary.status ?? ""
-                vehicleDetialsView.outAmount.text = String(describing: accountSummary.outstandingAmount)
-                vehicleDetialsView.totalPremium.text = accountSummary.totalPremium ?? ""
-                vehicleDetialsView.nextInstallment.text = String(describing: accountSummary.nextInstallmentAmount)
+                
+                let outAmount = String(describing: accountSummary.outstandingAmount)
+                if (outAmount == "") {
+                    vehicleDetialsView.outAmount.text = String(describing: accountSummary.outstandingAmount)
+                } else {
+                    vehicleDetialsView.outAmount.text = String(describing: accountSummary.outstandingAmount) + " OMR"
+                }
+                
+                let totalPremium = accountSummary.totalPremium ?? ""
+                if (totalPremium == "") {
+                    vehicleDetialsView.totalPremium.text = accountSummary.totalPremium ?? ""
+                } else {
+                    vehicleDetialsView.totalPremium.text = totalPremium + " OMR"
+                }
+                
+                let nextInstallment = String(describing: accountSummary.nextInstallmentAmount)
+                if (nextInstallment == "") {
+                    vehicleDetialsView.nextInstallment.text = String(describing: accountSummary.nextInstallmentAmount)
+                } else {
+                    vehicleDetialsView.nextInstallment.text = String(describing: accountSummary.nextInstallmentAmount) + " OMR"
+                }
+                
                 vehicleDetialsView.installmentPaid.text = "\(accountSummary.installment?.count ?? 0)"
                 vehicleDetialsView.installments = Array(accountSummary.installment ?? []) as! [POLICY_INSTALLMENT]
                 vehicleDetialsView.backButton.addTarget(self, action: #selector(self.vehicleBack(sender:)), for: UIControlEvents.touchUpInside)
@@ -349,9 +386,16 @@ extension AccountSummary : UITableViewDelegate {
                 vehicleDetialsView.vehicleNumber.text = accountSummary.vehicleNumber ?? ""
                 vehicleDetialsView.expDate.text = accountSummary.endDate ?? ""
                 vehicleDetialsView.status.text = accountSummary.status ?? ""
-                vehicleDetialsView.outAmount.text = String(describing: accountSummary.outstandingAmount)
-                vehicleDetialsView.totalPremium.text = accountSummary.totalPremium ?? ""
-                vehicleDetialsView.nextInstallment.text = String(describing: accountSummary.nextInstallmentAmount)
+                
+                let totalPremium = accountSummary.totalPremium ?? ""
+                if (totalPremium == "") {
+                    vehicleDetialsView.outAmount.text = accountSummary.totalPremium ?? ""
+                } else {
+                    vehicleDetialsView.outAmount.text = totalPremium + " OMR"
+                }
+//                vehicleDetialsView.outAmount.text = String(describing: accountSummary.outstandingAmount)
+//                vehicleDetialsView.totalPremium.text = accountSummary.totalPremium ?? ""
+//                vehicleDetialsView.nextInstallment.text = String(describing: accountSummary.nextInstallmentAmount)
                 vehicleDetialsView.backButton.addTarget(self, action: #selector(self.vehicleBack(sender:)), for: UIControlEvents.touchUpInside)
                 
                 self.vehicleDetialsView = vehicleDetialsView

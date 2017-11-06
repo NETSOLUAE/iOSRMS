@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="12141" systemVersion="16E195" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="13241" systemVersion="16G29" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="ACCOUNT_SUMMARY" representedClassName="ACCOUNT_SUMMARY" syncable="YES">
         <attribute name="endDate" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="insurer" optional="YES" attributeType="String" syncable="YES"/>
@@ -62,6 +62,19 @@
         <attribute name="relationship" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="staff_id" optional="YES" attributeType="String" syncable="YES"/>
         <relationship name="staff" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="STAFF_DETAILS" inverseName="dependent" inverseEntity="STAFF_DETAILS" syncable="YES"/>
+    </entity>
+    <entity name="EB_POLICY_CHILD" representedClassName="EB_POLICY_CHILD" syncable="YES">
+        <attribute name="companyNameEb" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="endDateEb" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="memberIdEb" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="policyRefEb" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="staffIdEb" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="startDateEb" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="EB_POLICY_GROUP" representedClassName="EB_POLICY_GROUP" syncable="YES">
+        <attribute name="memberNameEb" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="memberTypeEb" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="relationshipTypeEb" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
     <entity name="MASTER_DATA" representedClassName="MASTER_DATA" syncable="YES">
         <attribute name="changePin" optional="YES" attributeType="String" syncable="YES"/>
@@ -152,19 +165,21 @@
     </entity>
     <elements>
         <element name="ACCOUNT_SUMMARY" positionX="-63" positionY="135" width="128" height="240"/>
+        <element name="ACCOUNT_SUMMARY_LINES" positionX="-54" positionY="144" width="128" height="225"/>
         <element name="CLAIM_DETAILS" positionX="45" positionY="99" width="128" height="315"/>
         <element name="DEPENDENT_DETAILS" positionX="-117" positionY="90" width="128" height="223"/>
+        <element name="EB_POLICY_CHILD" positionX="-81" positionY="117" width="128" height="135"/>
+        <element name="EB_POLICY_GROUP" positionX="-90" positionY="108" width="128" height="90"/>
         <element name="MASTER_DATA" positionX="178" positionY="-36" width="128" height="120"/>
+        <element name="MASTER_DATA_LINES" positionX="-72" positionY="126" width="128" height="120"/>
         <element name="MASTER_DATA_SALARY" positionX="-90" positionY="108" width="128" height="120"/>
         <element name="PDF" positionX="-36" positionY="-18" width="128" height="75"/>
         <element name="POLICY_INSTALLMENT" positionX="-54" positionY="144" width="128" height="120"/>
         <element name="PRE_APPROVALS" positionX="198" positionY="99" width="128" height="240"/>
         <element name="STAFF_DETAILS" positionX="-288" positionY="27" width="128" height="223"/>
-        <element name="STAFF_DETAILS_POLICY" positionX="-72" positionY="126" width="128" height="120"/>
-        <element name="STAFF_DETAILS_SALARY" positionX="-81" positionY="117" width="128" height="105"/>
         <element name="STAFF_DETAILS_LINES" positionX="-81" positionY="117" width="128" height="105"/>
-        <element name="MASTER_DATA_LINES" positionX="-72" positionY="126" width="128" height="120"/>
+        <element name="STAFF_DETAILS_POLICY" positionX="-72" positionY="126" width="128" height="120"/>
         <element name="STAFF_DETAILS_POLICY_LINES" positionX="-63" positionY="135" width="128" height="120"/>
-        <element name="ACCOUNT_SUMMARY_LINES" positionX="-54" positionY="144" width="128" height="225"/>
+        <element name="STAFF_DETAILS_SALARY" positionX="-81" positionY="117" width="128" height="105"/>
     </elements>
 </model>

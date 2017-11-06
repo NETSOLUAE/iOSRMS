@@ -11,6 +11,7 @@ import CoreData
 
 class CustomAlertForget : UIViewController, UITextFieldDelegate {
     var isEB = false;
+    var enteredPhoneNumber = "";
     let transitioner = CAVTransitioner()
     let constants = Constants();
     let sharedInstance = CoreDataManager.sharedInstance;
@@ -55,7 +56,7 @@ class CustomAlertForget : UIViewController, UITextFieldDelegate {
         if (nationaID == "") {
             self.alertDialog1 (heading: "Alert", message: "Please Enter your NationalID");
         } else {
-            LoadingIndicatorView.show("Verifying...")
+            LoadingIndicatorView.show("Sending SMS....")
             var results : [MASTER_DATA]
             let masterDataFetchRequest: NSFetchRequest<MASTER_DATA>  = MASTER_DATA.fetchRequest()
             masterDataFetchRequest.returnsObjectsAsFaults = false
@@ -66,6 +67,8 @@ class CustomAlertForget : UIViewController, UITextFieldDelegate {
                     let staffID = results.first!.staffID ?? ""
                     let clientID = results.first!.clientID ?? ""
                     self.sendSms(params: "\(constants.BASE_URL)?action_id=reset_pin_new&mobile_no=\(mobileNumber)&staff_id=\(staffID)&client_no=\(clientID)&national_id=\(nationaID)")
+                } else {
+                    self.sendSms(params: "\(constants.BASE_URL)?action_id=reset_pin_new&mobile_no=\(enteredPhoneNumber)&staff_id=\("")&client_no=\("")&national_id=\(nationaID)")
                 }
             } catch let error as NSError {
                 print ("Could not fetch \(error), \(error.userInfo)")
@@ -74,7 +77,6 @@ class CustomAlertForget : UIViewController, UITextFieldDelegate {
     }
     
     func sendSms(params: String) -> Void {
-        LoadingIndicatorView.show("Sending SMS....")
         self.webserviceManager.login(type: "single", endPoint: params) { (result) in
             switch result {
             case .SuccessSingle( _, let message):
@@ -90,15 +92,11 @@ class CustomAlertForget : UIViewController, UITextFieldDelegate {
     }
     
     func alertDialog1 (heading: String, message: String) {
-//        let appDelegate = UIApplication.shared.delegate
         OperationQueue.main.addOperation {
             LoadingIndicatorView.hide()
             let alertController = UIAlertController(title: heading, message: message, preferredStyle: .alert)
             alertController.addAction(UIAlertAction(title: "Ok", style: .default, handler: { (action: UIAlertAction!) in
                 self.presentingViewController?.dismiss(animated: true)
-//                let storyboard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
-//                let vc: UIViewController = storyboard.instantiateViewController(withIdentifier: "LoginController") as UIViewController
-//                (appDelegate?.window??.rootViewController)?.present(vc, animated: true, completion: nil)
             }))
             
             self.present(alertController, animated: true, completion: nil)

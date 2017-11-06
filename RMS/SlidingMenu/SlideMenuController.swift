@@ -20,7 +20,7 @@ import UIKit
 }
 
 public struct SlideMenuOptions {
-    public static var leftViewWidth: CGFloat = 270.0
+    public static var leftViewWidth: CGFloat = 280.0
     public static var leftBezelWidth: CGFloat? = 16.0
     public static var contentViewScale: CGFloat = 0.96
     public static var contentViewOpacity: CGFloat = 0.5
@@ -643,6 +643,7 @@ open class SlideMenuController: UIViewController, UIGestureRecognizerDelegate {
     
     open override func toggleLeft() {
         if isLeftOpen() {
+            self.menuItem = ""
             closeLeft()
             setCloseWindowLevel()
             // Tracking of close tap is put in here. Because closeMenu is due to be call even when the menu tap.
@@ -1068,7 +1069,8 @@ extension UIViewController {
     }
     
     public func openRight() {
-        slideMenuController()?.openRight()    }
+        slideMenuController()?.openRight()
+    }
     
     public func closeLeft() {
         slideMenuController()?.closeLeft()

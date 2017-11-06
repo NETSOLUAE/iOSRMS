@@ -8,6 +8,10 @@
 
 import UIKit
 import CoreData
+ 
+struct PolicyDetailsText {
+    static var policyText = String();
+}
 
 class LoginController: UIViewController, UITextFieldDelegate {
     
@@ -23,6 +27,7 @@ class LoginController: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var forget: UILabel!
     @IBOutlet weak var forgetPassword: UILabel!
     @IBOutlet weak var registerNow: UIButton!
+    @IBOutlet weak var borderView: UIView!
     
     var results : [MASTER_DATA] = []
     var resultsSalary : [MASTER_DATA_SALARY] = []
@@ -60,12 +65,13 @@ class LoginController: UIViewController, UITextFieldDelegate {
         password.isSecureTextEntry = true
         
         if (currentSelection.name == "ebclaims") {
-            heading.text = "Mobile Number"
+            heading.text = "Mobile Number/Email"
             pin1.isHidden = true
             pin2.isHidden = true
             pin3.isHidden = true
             pin4.isHidden = true
             password.isHidden = false
+            borderView.isHidden = false
             forget.isHidden = true
             forgetPassword.isHidden = false
             registerNow.isHidden = false
@@ -76,6 +82,7 @@ class LoginController: UIViewController, UITextFieldDelegate {
             pin3.isHidden = false
             pin4.isHidden = false
             password.isHidden = true
+            borderView.isHidden = true
             forget.isHidden = false
             forget.isUserInteractionEnabled = true
             forgetPassword.isHidden = true
@@ -97,70 +104,70 @@ class LoginController: UIViewController, UITextFieldDelegate {
         // Do any additional setup after loading the view, typically from a nib.
     }
     
-    public func resetPinAlert () {
+    public func resetPinAlert (phoneNumber: String) {
         OperationQueue.main.addOperation {
             let vc = CustomAlertForget()
+            vc.enteredPhoneNumber = phoneNumber
             self.present(vc, animated: true)
         }
     }
     
     func tapFunction(sender:UITapGestureRecognizer) {
-        if (self.phoneNumber.text! as String != ""){
-            if (currentSelection.name == "ebclaims") {
-                resetPinAlert()
-//                var results : [MASTER_DATA]
-//                let masterDataFetchRequest: NSFetchRequest<MASTER_DATA>  = MASTER_DATA.fetchRequest()
-//                masterDataFetchRequest.returnsObjectsAsFaults = false
-//                do {
-//                    results = try managedContext.fetch(masterDataFetchRequest)
-//                    if (results.count > 0) {
-//                        let mobileNumber = results.first!.mobileNumber ?? ""
-//                        let staffID = results.first!.staffID ?? ""
-//                        let clientID = results.first!.clientID ?? ""
-//                        self.sendSms(params: "\(constants.BASE_URL)?action_id=send_sms&mobile_no=\(mobileNumber)&staff_id=\(staffID)&client_no=\(clientID)")
-//                    }
-//                } catch let error as NSError {
-//                    print ("Could not fetch \(error), \(error.userInfo)")
-//                }
-            } else if (currentSelection.name == "salary") {
+        if (currentSelection.name == "ebclaims") {
+            if (self.phoneNumber.text! as String == ""){
+                alertDialog (heading: "Alert", message: "Please Enter your Phone Number/Email");
+            } else {
+                resetPinAlert(phoneNumber: self.phoneNumber.text!)
+            }
+        } else if (currentSelection.name == "salary") {
+            if (self.phoneNumber.text! as String == ""){
+                alertDialog (heading: "Alert", message: "Please Enter your National ID.");
+            } else {
                 var results : [MASTER_DATA_SALARY]
                 let masterDataFetchRequest: NSFetchRequest<MASTER_DATA_SALARY>  = MASTER_DATA_SALARY.fetchRequest()
                 masterDataFetchRequest.returnsObjectsAsFaults = false
                 do {
                     results = try managedContext.fetch(masterDataFetchRequest)
                     if (results.count > 0) {
-                        let mobileNumber = results.first!.nationalID ?? ""
+//                        let mobileNumber = results.first!.nationalID ?? ""
                         let staffID = results.first!.staffID ?? ""
                         let clientID = results.first!.clientID ?? ""
-                        self.sendSms(params: "\(constants.BASE_URL_SALARY)?action_id=send_sms&national_id=\(mobileNumber)&staff_id=\(staffID)&client_no=\(clientID)")
+                        self.sendSms(params: "\(constants.BASE_URL_SALARY)?action_id=send_sms&national_id=\(self.phoneNumber.text!)&staff_id=\(staffID)&client_no=\(clientID)")
+                    } else {
+                        self.sendSms(params: "\(constants.BASE_URL_SALARY)?action_id=send_sms&national_id=\(self.phoneNumber.text!)&staff_id=\("")&client_no=\("")")
                     }
                 } catch let error as NSError {
                     print ("Could not fetch \(error), \(error.userInfo)")
                 }
-            } else if (currentSelection.name == "lines" ) {
+            }
+        } else if (currentSelection.name == "lines" ) {
+            if (self.phoneNumber.text! as String == ""){
+                alertDialog (heading: "Alert", message: "Please Enter your National ID.");
+            } else {
                 var results : [MASTER_DATA_LINES]
                 let masterDataFetchRequest: NSFetchRequest<MASTER_DATA_LINES>  = MASTER_DATA_LINES.fetchRequest()
                 masterDataFetchRequest.returnsObjectsAsFaults = false
                 do {
                     results = try managedContext.fetch(masterDataFetchRequest)
                     if (results.count > 0) {
-                        let mobileNumber = results.first!.nationalID ?? ""
+//                        let mobileNumber = results.first!.nationalID ?? ""
                         let staffID = results.first!.staffID ?? ""
                         let clientID = results.first!.clientID ?? ""
-                        self.sendSms(params: "\(constants.BASE_URL_LINES)?action_id=send_sms&national_id=\(mobileNumber)&staff_id=\(staffID)&client_no=\(clientID)")
+                        self.sendSms(params: "\(constants.BASE_URL_LINES)?action_id=send_sms&national_id=\(self.phoneNumber.text!)&staff_id=\(staffID)&client_no=\(clientID)")
+                    } else {
+                        self.sendSms(params: "\(constants.BASE_URL_LINES)?action_id=send_sms&national_id=\(self.phoneNumber.text!)&staff_id=\("")&client_no=\("")")
                     }
                 } catch let error as NSError {
                     print ("Could not fetch \(error), \(error.userInfo)")
                 }
             }
-        } else {
-//            alertDialog (heading: "Alert", message: "Please Enter your Phone Number");
         }
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         if (currentSelection.name == "ebclaims") {
+            phoneNumber.keyboardType = UIKeyboardType.emailAddress
             let masterDataFetchRequest: NSFetchRequest<MASTER_DATA>  = MASTER_DATA.fetchRequest()
             masterDataFetchRequest.returnsObjectsAsFaults = false
             do {
@@ -169,9 +176,9 @@ class LoginController: UIViewController, UITextFieldDelegate {
                     let mobileNumber = results.first!.mobileNumber
                     if (mobileNumber != ""){
                         self.pinHeading.text = "Enter your Password"
-                        self.phoneNumber.text = mobileNumber;
-                        self.phoneNumber.isUserInteractionEnabled = false;
-                        password.becomeFirstResponder();
+//                        self.phoneNumber.text = mobileNumber;
+//                        self.phoneNumber.isUserInteractionEnabled = false;
+                        phoneNumber.becomeFirstResponder();
                     } else {
                         self.pinHeading.text = "Enter your Password"
                         phoneNumber.becomeFirstResponder();
@@ -184,6 +191,7 @@ class LoginController: UIViewController, UITextFieldDelegate {
                 print ("Could not fetch \(error), \(error.userInfo)")
             }
         } else if (currentSelection.name == "salary") {
+            phoneNumber.keyboardType = UIKeyboardType.numberPad
             let masterDataFetchRequest: NSFetchRequest<MASTER_DATA_SALARY>  = MASTER_DATA_SALARY.fetchRequest()
             masterDataFetchRequest.returnsObjectsAsFaults = false
             do {
@@ -193,7 +201,7 @@ class LoginController: UIViewController, UITextFieldDelegate {
                     if (nationalID != ""){
                         self.pinHeading.text = "Enter your Secret PIN"
                         self.phoneNumber.text = nationalID;
-                        self.phoneNumber.isUserInteractionEnabled = false;
+//                        self.phoneNumber.isUserInteractionEnabled = false;
                         pin1.becomeFirstResponder();
                     } else {
                         self.pinHeading.text = "Setup your Secret PIN"
@@ -207,6 +215,7 @@ class LoginController: UIViewController, UITextFieldDelegate {
                 print ("Could not fetch \(error), \(error.userInfo)")
             }
         } else if (currentSelection.name == "lines" ) {
+            phoneNumber.keyboardType = UIKeyboardType.numberPad
             let masterDataFetchRequest: NSFetchRequest<MASTER_DATA_LINES>  = MASTER_DATA_LINES.fetchRequest()
             masterDataFetchRequest.returnsObjectsAsFaults = false
             do {
@@ -216,7 +225,7 @@ class LoginController: UIViewController, UITextFieldDelegate {
                     if (nationalID != ""){
                         self.pinHeading.text = "Enter your Secret PIN"
                         self.phoneNumber.text = nationalID;
-                        self.phoneNumber.isUserInteractionEnabled = false;
+//                        self.phoneNumber.isUserInteractionEnabled = false;
                         pin1.becomeFirstResponder();
                     } else {
                         self.pinHeading.text = "Setup your Secret PIN"
@@ -240,23 +249,27 @@ class LoginController: UIViewController, UITextFieldDelegate {
             
             if (phoneText != ""){
                 if (passwordText != "") {
-                    /* start the activity indicator (you are now on the main queue) */
-                    LoadingIndicatorView.show("Authenticating...")
-                    self.password.resignFirstResponder()
-                    if (currentSelection.name == "ebclaims") {
-                        var staffID = ""
-                        var clientID = ""
-                        if (results.count > 0) {
-                            staffID = results.first!.staffID ?? ""
-                            clientID = results.first!.clientID ?? ""
+                    if (passwordText.length > 5) {
+                        /* start the activity indicator (you are now on the main queue) */
+                        LoadingIndicatorView.show("Authenticating...")
+                        self.password.resignFirstResponder()
+                        if (currentSelection.name == "ebclaims") {
+                            var staffID = ""
+                            var clientID = ""
+                            if (results.count > 0) {
+                                staffID = results.first!.staffID ?? ""
+                                clientID = results.first!.clientID ?? ""
+                            }
+                            loginCall(actionId: "login", phoneNumber: phoneText as String, pin: passwordText as String, deviceID: constants.deviceID , staffID: staffID , clientID: clientID)
                         }
-                        loginCall(actionId: "login", phoneNumber: phoneText as String, pin: passwordText as String, deviceID: constants.deviceID , staffID: staffID , clientID: clientID)
+                    } else {
+                        alertDialog (heading: "Alert", message: "Password should be more than 5 characters");
                     }
                 } else {
                     alertDialog (heading: "Alert", message: "Please Enter Password");
                 }
             } else {
-                alertDialog (heading: "Alert", message: "Please Enter your Phone Number");
+                alertDialog (heading: "Alert", message: "Please Enter your Phone Number/Email");
             }
         } else {
             let pin1Text: NSString = self.pin1.text! as NSString;
@@ -273,15 +286,7 @@ class LoginController: UIViewController, UITextFieldDelegate {
                     self.pin2.resignFirstResponder()
                     self.pin3.resignFirstResponder()
                     self.pin4.resignFirstResponder()
-                    if (currentSelection.name == "ebclaims") {
-                        var staffID = ""
-                        var clientID = ""
-                        if (results.count > 0) {
-                            staffID = results.first!.staffID ?? ""
-                            clientID = results.first!.clientID ?? ""
-                        }
-                        loginCall(actionId: "login", phoneNumber: phoneText as String, pin: pin, deviceID: constants.deviceID , staffID: staffID , clientID: clientID)
-                    } else if (currentSelection.name == "salary") {
+                    if (currentSelection.name == "salary") {
                         var staffIDSalary = ""
                         var clientIDSalary = ""
                         if (resultsSalary.count > 0) {
@@ -425,6 +430,7 @@ class LoginController: UIViewController, UITextFieldDelegate {
                     if (currentSelection.name == "ebclaims") {
                         self.sharedInstance.clearMasterData()
                         self.sharedInstance.saveInMasterDataWith(phoneNumber: phoneNumber, pin: pin, array: [data])
+                        
                         var results : [MASTER_DATA]
                         let studentUniversityFetchRequest: NSFetchRequest<MASTER_DATA>  = MASTER_DATA.fetchRequest()
                         studentUniversityFetchRequest.returnsObjectsAsFaults = false
@@ -541,7 +547,6 @@ class LoginController: UIViewController, UITextFieldDelegate {
     }
     
     func policyDetails(actionId: String, nationalId: String) -> Void {
-        //        LoadingIndicatorView.show("Fetching Data...")
         
         let endPoint: String = {
             return "\(constants.BASE_URL_SALARY)?action_id=\(actionId)&national_id=\(nationalId)"
@@ -583,7 +588,6 @@ class LoginController: UIViewController, UITextFieldDelegate {
     }
     
     func staffDetails(actionId: String, phoneNumber: String, staffID: String, clientID: String) -> Void {
-//        LoadingIndicatorView.show("Fetching Data...")
         
         let endPoint: String = {
             return "\(constants.BASE_URL)?action_id=\(actionId)&mobile_no=\(phoneNumber)&staff_id=\(staffID)&client_no=\(clientID)"
@@ -596,12 +600,36 @@ class LoginController: UIViewController, UITextFieldDelegate {
                     self.sharedInstance.clearStaffDetails()
                     self.sharedInstance.saveInStaffDataWith(array: [data])
                 }
-                self.claimDetails(actionId: "claim_status", staffID: staffID, clientID: clientID)
+                self.loadPolicy(actionId: "staff_policy_summary", phoneNumber: phoneNumber, staffID: staffID, clientID: clientID)
             case .Error(let message):
                 LoadingIndicatorView.hideInMain()
                 self.alertDialog (heading: "", message: message);
             default:
                 LoadingIndicatorView.hideInMain()
+            }
+        }
+    }
+    
+    func loadPolicy(actionId: String, phoneNumber: String, staffID: String, clientID: String) -> Void {
+        
+        let endPoint: String = {
+            return "\(constants.BASE_URL)?action_id=\(actionId)&mobile_no=\(phoneNumber)&staff_id=\(staffID)&client_no=\(clientID)"
+        }()
+        
+        self.webserviceManager.login(type: "ebPolicy", endPoint: endPoint) { (result) in
+            switch result {
+            case .SuccessSingle(let data, let require_update):
+                if (require_update == "yes") {
+                    self.sharedInstance.clearEbPolicyDetails()
+                    _ = self.sharedInstance.createEbPolicyEntityFrom(dictionary: data)
+                }
+                self.claimDetails(actionId: "claim_status", staffID: staffID, clientID: clientID)
+            case .Error(let message):
+                LoadingIndicatorView.hideInMain()
+                print ("Could not fetch \(message)")
+            default:
+                LoadingIndicatorView.hideInMain()
+                print ("Could not fetch \(self.constants.errorMessage)")
             }
         }
     }
@@ -620,10 +648,11 @@ class LoginController: UIViewController, UITextFieldDelegate {
                     self.sharedInstance.saveInClaimDataWith(array: [data])
                 }
                 self.preApproval(actionId: "pre_approval", staffID: staffID, clientID: clientID)
-            case .Error(let message):
+            case .Error( _):
                 LoadingIndicatorView.hideInMain()
-                self.alertDialog (heading: "", message: message);
+                self.preApproval(actionId: "pre_approval", staffID: staffID, clientID: clientID)
             default:
+                self.preApproval(actionId: "pre_approval", staffID: staffID, clientID: clientID)
                 LoadingIndicatorView.hideInMain()
             }
         }
@@ -644,11 +673,12 @@ class LoginController: UIViewController, UITextFieldDelegate {
                 }
                 LoadingIndicatorView.hideInMain()
                 self.callHomeController()
-            case .Error(let message):
+            case .Error( _):
                 LoadingIndicatorView.hideInMain()
-                self.alertDialog (heading: "", message: message);
+                self.callHomeController()
             default:
                 LoadingIndicatorView.hideInMain()
+                self.callHomeController()
             }
         }
     }

@@ -13,6 +13,7 @@ import CoreData
 class Preapprovals: UITableViewController, IndicatorInfoProvider {
     
     var itemInfo: IndicatorInfo = "Preapproval"
+    var staffName = ""
     let searchController = UISearchController(searchResultsController: nil)
     var filteredCandies = [PRE_APPROVALS]()
     let refreshControl1 = UIRefreshControl()
@@ -38,7 +39,7 @@ class Preapprovals: UITableViewController, IndicatorInfoProvider {
         tableView.backgroundColor = .white
         tableView.preservesSuperviewLayoutMargins = false
         tableView.layoutMargins = UIEdgeInsets.zero
-        tableView.separatorInset = UIEdgeInsets.init(top: 0, left: 5, bottom: 0, right: 5)
+        tableView.separatorInset = UIEdgeInsets.init(top: 0, left: 10, bottom: 0, right: 10)
         tableView.tableFooterView = UIView (frame: CGRect.zero)
         
         searchController.searchResultsUpdater = self as UISearchResultsUpdating
@@ -62,6 +63,14 @@ class Preapprovals: UITableViewController, IndicatorInfoProvider {
     }
     
     func refreshPreapproval(refreshControl: UIRefreshControl) {
+        if searchController.isActive && searchController.searchBar.text != "" {
+            self.searchController.dismiss(animated: false) {
+                // Do what you want here like perform segue or present
+                self.searchController.searchBar.text = ""
+                self.searchController.searchBar.showsCancelButton = false
+            }
+        }
+        
         var results : [STAFF_DETAILS]
         let studentUniversityFetchRequest: NSFetchRequest<STAFF_DETAILS>  = STAFF_DETAILS.fetchRequest()
         studentUniversityFetchRequest.returnsObjectsAsFaults = false
@@ -127,6 +136,21 @@ class Preapprovals: UITableViewController, IndicatorInfoProvider {
                 
             }
         }
+        
+        let managedContext =
+            sharedInstance.persistentContainer.viewContext
+        
+        let fetchRequest =
+            NSFetchRequest<NSManagedObject>(entityName: "STAFF_DETAILS")
+        do {
+            let people = try managedContext.fetch(fetchRequest)
+            for people in people {
+                self.staffName = (people.value(forKey: "member_name") ?? "") as! String;
+                return
+            }
+        } catch let error as NSError {
+            print("Could not fetch. \(error), \(error.userInfo)")
+        }
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -153,7 +177,12 @@ class Preapprovals: UITableViewController, IndicatorInfoProvider {
         cell.policyNo?.text = preApprovals.pol_ref
         cell.regDate?.text = preApprovals.entry_dt
         cell.status?.text = preApprovals.status
-        cell.patientName?.text = preApprovals.patient_name
+        let patientName = preApprovals.patient_name
+        if (patientName == self.staffName) {
+            cell.patientName?.text = preApprovals.patient_name! + " (P)"
+        } else {
+            cell.patientName?.text = preApprovals.patient_name! + " (D)"
+        }
         return cell
     }
     
@@ -225,8 +254,10 @@ class Preapprovals: UITableViewController, IndicatorInfoProvider {
                 self.tableView.reloadData()
                 self.refreshControl1.endRefreshing()
             case .Error(let message):
+                self.refreshControl1.endRefreshing()
                 self.alertDialog (heading: "", message: message);
             default:
+                self.refreshControl1.endRefreshing()
                 self.alertDialog (heading: "", message: self.constants.errorMessage);
             }
         }

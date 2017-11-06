@@ -32,18 +32,15 @@ class PostComments: UIViewController, IndicatorInfoProvider, UITextViewDelegate,
     }
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         comments.delegate = self
         name.delegate = self
         subject.delegate = self
         mobileNumber.delegate = self
-        
-        let img = UIImageView(frame: comments.bounds)
-        img.image = UIImage(named: "comments-big")
         comments.backgroundColor = UIColor.clear
-        comments.addSubview( img)
+        comments.layer.contents = UIImage(named: "comments-big")!.cgImage
         comments.text = "Comments"
         comments.textColor = UIColor.lightGray
-//        comments.selectedTextRange = comments.textRange(from: comments.beginningOfDocument, to: comments.beginningOfDocument)
         
         let paddingView = UIView()
         paddingView.frame = CGRect(x: 0, y: 0, width: 3, height: self.name.frame.size.height)
@@ -51,12 +48,12 @@ class PostComments: UIViewController, IndicatorInfoProvider, UITextViewDelegate,
         name.leftViewMode = UITextFieldViewMode.always
         
         let paddingView1 = UIView()
-        paddingView1.frame = CGRect(x: 0, y: 0, width: 3, height: self.name.frame.size.height)
+        paddingView1.frame = CGRect(x: 0, y: 0, width: 3, height: self.mobileNumber.frame.size.height)
         mobileNumber.leftView = paddingView1
         mobileNumber.leftViewMode = UITextFieldViewMode.always
         
         let paddingView2 = UIView()
-        paddingView2.frame = CGRect(x: 0, y: 0, width: 3, height: self.name.frame.size.height)
+        paddingView2.frame = CGRect(x: 0, y: 0, width: 3, height: self.subject.frame.size.height)
         subject.leftView = paddingView2
         subject.leftViewMode = UITextFieldViewMode.always
         
@@ -96,6 +93,8 @@ class PostComments: UIViewController, IndicatorInfoProvider, UITextViewDelegate,
                 print ("Could not fetch \(error), \(error.userInfo)")
             }
         }
+        hideKeyboard()
+        addDoneButtonOnKeyboard()
     }
     
     func textViewDidBeginEditing(_ textView: UITextView) {
@@ -113,6 +112,19 @@ class PostComments: UIViewController, IndicatorInfoProvider, UITextViewDelegate,
     }
     
     func textFieldShouldReturn(_ scoreText: UITextField) -> Bool {
+        if (scoreText == self.name) {
+            name.resignFirstResponder()
+            subject.becomeFirstResponder()
+        } else if (scoreText == self.subject) {
+            subject.resignFirstResponder()
+            mobileNumber.becomeFirstResponder()
+        } else {
+            self.view.endEditing(true)
+        }
+        return true
+    }
+    
+    func textViewShouldReturn(_ scoreText: UITextView) -> Bool {
         self.view.endEditing(true)
         return true
     }
@@ -126,20 +138,32 @@ class PostComments: UIViewController, IndicatorInfoProvider, UITextViewDelegate,
         return true
     }
     
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        
+        if(textField == mobileNumber) {//This makes the new text black.
+            guard let text = textField.text else { return true }
+            let newLength = text.characters.count + string.characters.count - range.length
+            return newLength <= constants.limitLength
+        }
+        return true
+    }
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
     }
     
     @IBAction func submit(_ sender: Any) {
-        let name1 = self.name.text
-        let subject1 = self.subject.text
-        let mobile1 = self.mobileNumber.text
-        let comments2 = self.comments.text
+        self.view.endEditing(true)
+        let name1 = self.name.text ?? ""
+        let subject1 = self.subject.text ?? ""
+        let mobile1 = self.mobileNumber.text ?? ""
+        let comments2 = self.comments.text ?? ""
         
-        if ((name1?.length)! <= 0 || (subject1?.length)! <= 0 || (mobile1?.length)! <= 0 || (comments2?.length)! <= 0) {
-            self.showToast(message: "All fileds are mandatory")
+        if ((name1.length) <= 0 || (subject1.length) <= 0 || (mobile1.length) <= 0 || (comments2.length) <= 0) {
+            self.alertDialog (heading: "", message: self.constants.allFieldsErrorMessage, result: "Error");
+        } else if (!constants.isValidMobileNumber(mobile: mobile1)){
+            self.alertDialog (heading: "", message: self.constants.validMobileNumberError, result: "Error");
         } else {
-            
             if (currentSelection.name == "ebclaims") {
                 var results : [STAFF_DETAILS]
                 let studentUniversityFetchRequest: NSFetchRequest<STAFF_DETAILS>  = STAFF_DETAILS.fetchRequest()
@@ -149,12 +173,8 @@ class PostComments: UIViewController, IndicatorInfoProvider, UITextViewDelegate,
                     let staff_id = results.first!.staff_id ?? ""
                     let member_id = results.first!.member_id ?? ""
                     let client_id = results.first!.client_id ?? ""
-                    LoadingIndicatorView.show("Submitting Comments...")
-                    self.name.resignFirstResponder()
-                    self.mobileNumber.resignFirstResponder()
-                    self.subject.resignFirstResponder()
-                    self.comments.resignFirstResponder()
-                    self.postComments(baseURL: constants.BASE_URL, actionId: "post_comments", memberId: member_id, staffID: staff_id, clientID: client_id, phoneNumber: mobile1!, name: name1!, subject: subject1!, comments1: comments2!)
+                    LoadingIndicatorView.show(constants.commentsLoading)
+                    self.postComments(baseURL: constants.BASE_URL, actionId: "post_comments", memberId: member_id, staffID: staff_id, clientID: client_id, phoneNumber: mobile1, name: name1, subject: subject1, comments1: comments2)
                 } catch let error as NSError {
                     print ("Could not fetch \(error), \(error.userInfo)")
                 }
@@ -166,12 +186,8 @@ class PostComments: UIViewController, IndicatorInfoProvider, UITextViewDelegate,
                     results = try self.managedContext.fetch(studentUniversityFetchRequest)
                     let staff_id = results.first!.staffID ?? ""
                     let client_id = results.first!.clientID ?? ""
-                    LoadingIndicatorView.show("Submitting Comments...")
-                    self.name.resignFirstResponder()
-                    self.mobileNumber.resignFirstResponder()
-                    self.subject.resignFirstResponder()
-                    self.comments.resignFirstResponder()
-                    self.postComments(baseURL: constants.BASE_URL_SALARY, actionId: "post_comments", memberId: "", staffID: staff_id, clientID: client_id, phoneNumber: mobile1!, name: name1!, subject: subject1!, comments1: comments2!)
+                    LoadingIndicatorView.show(constants.commentsLoading)
+                    self.postComments(baseURL: constants.BASE_URL_SALARY, actionId: "post_comments", memberId: "", staffID: staff_id, clientID: client_id, phoneNumber: mobile1, name: name1, subject: subject1, comments1: comments2)
                 } catch let error as NSError {
                     print ("Could not fetch \(error), \(error.userInfo)")
                 }
@@ -183,12 +199,8 @@ class PostComments: UIViewController, IndicatorInfoProvider, UITextViewDelegate,
                     results = try self.managedContext.fetch(studentUniversityFetchRequest)
                     let staff_id = results.first!.staffID ?? ""
                     let client_id = results.first!.clientID ?? ""
-                    LoadingIndicatorView.show("Submitting Comments...")
-                    self.name.resignFirstResponder()
-                    self.mobileNumber.resignFirstResponder()
-                    self.subject.resignFirstResponder()
-                    self.comments.resignFirstResponder()
-                    self.postComments(baseURL: constants.BASE_URL_LINES, actionId: "post_comments", memberId: "", staffID: staff_id, clientID: client_id, phoneNumber: mobile1!, name: name1!, subject: subject1!, comments1: comments2!)
+                    LoadingIndicatorView.show(constants.commentsLoading)
+                    self.postComments(baseURL: constants.BASE_URL_LINES, actionId: "post_comments", memberId: "", staffID: staff_id, clientID: client_id, phoneNumber: mobile1, name: name1, subject: subject1, comments1: comments2)
                 } catch let error as NSError {
                     print ("Could not fetch \(error), \(error.userInfo)")
                 }
@@ -214,27 +226,29 @@ class PostComments: UIViewController, IndicatorInfoProvider, UITextViewDelegate,
             LoadingIndicatorView.hideInMain()
             switch result {
             case .SuccessSingle( _, let message):
-                self.alertDialog (heading: "", message: message);
+                self.alertDialog (heading: "", message: message, result: "Success");
             case .Error(let message):
-                self.alertDialog (heading: "", message: message);
+                self.alertDialog (heading: "", message: message, result: "Success");
             default:
-                self.alertDialog (heading: "", message: self.constants.errorMessage);
+                self.alertDialog (heading: "", message: self.constants.errorMessage, result: "Error");
                 
             }
         }
     }
     
-    func alertDialog (heading: String, message: String) {
+    func alertDialog (heading: String, message: String, result: String) {
         OperationQueue.main.addOperation {
-            self.name.text  = ""
-            self.subject.text  = ""
-            self.mobileNumber.text  = ""
-            self.comments.text  = ""
-            self.name.placeholder  = "Your Name"
-            self.subject.placeholder  = "Subject"
-            self.mobileNumber.placeholder  = "Mobile Number"
-            self.comments.text = "Comments"
-            self.comments.textColor = UIColor.lightGray
+            if (result == "Success") {
+                self.name.text  = ""
+                self.subject.text  = ""
+                self.mobileNumber.text  = ""
+                self.comments.text  = ""
+                self.name.placeholder  = "Your Name"
+                self.subject.placeholder  = "Subject"
+                self.mobileNumber.placeholder  = "Mobile Number"
+                self.comments.text = "Comments"
+                self.comments.textColor = UIColor.lightGray
+            }
             let alertController = UIAlertController(title: heading, message: message, preferredStyle: .alert)
             let defaultAction = UIAlertAction(title: "OK", style: .default, handler: nil)
             alertController.addAction(defaultAction)
@@ -243,23 +257,29 @@ class PostComments: UIViewController, IndicatorInfoProvider, UITextViewDelegate,
         }
     }
     
-    func showToast(message : String) {
+    func addDoneButtonOnKeyboard() {
+        let doneToolbar: UIToolbar = UIToolbar(frame: CGRect(x: 0, y: 0, width: 320, height: 50))
+        doneToolbar.barStyle = UIBarStyle.default
         
-        let toastLabel = UILabel(frame: CGRect(x: self.view.frame.size.width/2 - 150, y: self.view.frame.size.height + 100, width: 280, height: 35))
-        toastLabel.backgroundColor = UIColor.black.withAlphaComponent(0.6)
-        toastLabel.textColor = UIColor.white
-        toastLabel.textAlignment = .center;
-        toastLabel.font = UIFont(name: "Montserrat-Light", size: 12.0)
-        toastLabel.text = message
-        toastLabel.alpha = 1.0
-        toastLabel.layer.cornerRadius = 10;
-        toastLabel.clipsToBounds  =  true
-        self.view.addSubview(toastLabel)
-        UIView.animate(withDuration: 4.0, delay: 0.1, options: .curveEaseOut, animations: {
-            toastLabel.alpha = 0.0
-        }, completion: {(isCompleted) in
-            toastLabel.removeFromSuperview()
-        })
+        let flexSpace = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.flexibleSpace, target: nil, action: nil)
+        let done: UIBarButtonItem = UIBarButtonItem(title: "Next", style: UIBarButtonItemStyle.done, target: self, action: #selector(Enquiry.doneButtonAction))
+        done.tintColor = .black
+        
+        let items = NSMutableArray()
+        items.add(flexSpace)
+        items.add(done)
+        
+        doneToolbar.items = items as? [UIBarButtonItem]
+        doneToolbar.sizeToFit()
+        
+        self.mobileNumber.inputAccessoryView = doneToolbar
+    }
+    
+    func doneButtonAction() {
+        if (mobileNumber.isFirstResponder) {
+            mobileNumber.resignFirstResponder()
+            comments.becomeFirstResponder()
+        }
     }
     
 }

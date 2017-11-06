@@ -38,7 +38,7 @@ class ClaimDetails: UITableViewController, IndicatorInfoProvider {
         tableView.backgroundColor = .white
         tableView.preservesSuperviewLayoutMargins = false
         tableView.layoutMargins = UIEdgeInsets.zero
-        tableView.separatorInset = UIEdgeInsets.init(top: 0, left: 5, bottom: 0, right: 5)
+        tableView.separatorInset = UIEdgeInsets.init(top: 0, left: 10, bottom: 0, right: 10)
         tableView.tableFooterView = UIView (frame: CGRect.zero)
         
         searchController.searchResultsUpdater = self as UISearchResultsUpdating
@@ -62,6 +62,15 @@ class ClaimDetails: UITableViewController, IndicatorInfoProvider {
     }
     
     func refreshClaims(refreshControl: UIRefreshControl) {
+        
+        if searchController.isActive && searchController.searchBar.text != "" {
+            self.searchController.dismiss(animated: false) {
+                // Do what you want here like perform segue or present
+                self.searchController.searchBar.text = ""
+                self.searchController.searchBar.showsCancelButton = false
+            }
+        }
+        
         var results : [STAFF_DETAILS]
         let studentUniversityFetchRequest: NSFetchRequest<STAFF_DETAILS>  = STAFF_DETAILS.fetchRequest()
         studentUniversityFetchRequest.returnsObjectsAsFaults = false
@@ -238,8 +247,10 @@ class ClaimDetails: UITableViewController, IndicatorInfoProvider {
                 self.tableView.reloadData()
                 self.refreshControl1.endRefreshing()
             case .Error(let message):
+                self.refreshControl1.endRefreshing()
                 self.alertDialog (heading: "", message: message);
             default:
+                self.refreshControl1.endRefreshing()
                 self.alertDialog (heading: "", message: self.constants.errorMessage);
             }
         }

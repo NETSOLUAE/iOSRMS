@@ -30,5 +30,31 @@ class MenuController: UIViewController {
         currentSelection.name = segue.identifier!
     }
 
+    @IBAction func navigateToAggregator(_ sender: Any) {
+        let aggregatorLink = "iOSDevTips://"
+        let aggregatorUrl = NSURL(string: aggregatorLink)
+        
+        if UIApplication.shared.canOpenURL(aggregatorUrl! as URL) {
+            if #available(iOS 10.0, *) {
+                UIApplication.shared.open(aggregatorUrl! as URL, options: [:], completionHandler: nil)
+            }
+            else {
+                UIApplication.shared.openURL(aggregatorUrl! as URL)
+            }
+        } else {
+            let alertController = UIAlertController(title: "", message: "Coming Soon!", preferredStyle: .alert)
+            alertController.addAction(UIAlertAction(title: "Ok", style: .default, handler: { (action: UIAlertAction!) in
+            }))
+            self.present(alertController, animated: true, completion: nil)
+            
+//            if #available(iOS 10.0, *) {
+//                UIApplication.shared.open(NSURL(string: "http://instagram.com/")! as URL, options: [:], completionHandler: nil)
+//            }
+//            else {
+//                //redirect to safari because the user doesn't have Instagram
+//                UIApplication.shared.openURL(NSURL(string: "http://instagram.com/")! as URL)
+//            }
+        }
+    }
 }
 

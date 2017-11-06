@@ -282,15 +282,9 @@ open class ButtonBarPagerTabStripViewController: PagerTabStripViewController, Pa
         configureCell(cell, indicatorInfo: indicatorInfo)
         
         if pagerBehaviour.isProgressiveIndicator {
-            
-            changeCurrentIndexProgressive = {(oldCell: ButtonBarViewCell?, newCell: ButtonBarViewCell?, progressPercentage: CGFloat, changeCurrentIndex: Bool, animated: Bool) -> Void in
-                guard changeCurrentIndex == true else { return }
-                oldCell?.imageView.image = indicatorInfo.image
-                newCell?.imageView.image = indicatorInfo.highlightedImage
+            if let changeCurrentIndexProgressive = changeCurrentIndexProgressive {
+                changeCurrentIndexProgressive(currentIndex == indexPath.item ? nil : cell, currentIndex == indexPath.item ? cell : nil, 1, true, false)
             }
-//            if let changeCurrentIndexProgressive = changeCurrentIndexProgressive {
-//                changeCurrentIndexProgressive(currentIndex == indexPath.item ? nil : cell, currentIndex == indexPath.item ? cell : nil, 1, true, false)
-//            }
         } else {
             if let changeCurrentIndex = changeCurrentIndex {
                 changeCurrentIndex(currentIndex == indexPath.item ? nil : cell, currentIndex == indexPath.item ? cell : nil, false)

@@ -14,6 +14,7 @@ class VehicleDetails: UIViewController {
     @IBOutlet weak var vehicleNumber: UILabel!
     @IBOutlet weak var expDate: UILabel!
     @IBOutlet weak var status: UILabel!
+    @IBOutlet weak var outAmountHeading: UILabel!
     @IBOutlet weak var outAmount: UILabel!
     @IBOutlet weak var totalPremium: UILabel!
     @IBOutlet weak var nextInstallment: UILabel!
@@ -21,6 +22,7 @@ class VehicleDetails: UIViewController {
     @IBOutlet weak var backButton: UIButton!
     @IBOutlet weak var tableView: UITableView!
     
+    @IBOutlet weak var totalPremiumView: UIView!
     @IBOutlet weak var nextInstallmentHeading: UILabel!
     @IBOutlet weak var installmentsPaidView: UIView!
     @IBOutlet weak var installmentsDetailsView: UIView!
@@ -56,10 +58,14 @@ class VehicleDetails: UIViewController {
         
         installmentsDetailsView.isHidden = true
         if (currentSelection.name == "salary") {
+            outAmountHeading.text = "Outstanding Amount"
+            totalPremiumView.isHidden = false
             nextInstallmentHeading.isHidden = false
             nextInstallment.isHidden = false
             installmentsPaidView.isHidden = false
         } else if (currentSelection.name == "lines") {
+            outAmountHeading.text = "Total Premium Charged"
+            totalPremiumView.isHidden = true
             nextInstallmentHeading.isHidden = true
             nextInstallment.isHidden = true
             installmentsPaidView.isHidden = true
@@ -100,7 +106,7 @@ class VehicleDetails: UIViewController {
             self.tableView.backgroundColor = .white
             self.tableView.preservesSuperviewLayoutMargins = false
             self.tableView.layoutMargins = UIEdgeInsets.zero
-            self.tableView.separatorInset = UIEdgeInsets.init(top: 0, left: 5, bottom: 0, right: 5)
+            self.tableView.separatorInset = UIEdgeInsets.init(top: 0, left: 10, bottom: 0, right: 10)
             self.tableView.tableFooterView = UIView (frame: CGRect.zero)
             // trigger load
             load()
@@ -140,7 +146,7 @@ extension VehicleDetails : UITableViewDataSource {
         cell.selectionStyle = UITableViewCellSelectionStyle.none
         let policyInstallment: POLICY_INSTALLMENT
         policyInstallment = installments[indexPath.row]
-        cell.amount?.text = policyInstallment.amount
+        cell.amount?.text = (policyInstallment.amount ?? "0") + " OMR"
         cell.regDate?.text = policyInstallment.date
         cell.status?.text = policyInstallment.status
         if (installments.first?.status == "Active"){

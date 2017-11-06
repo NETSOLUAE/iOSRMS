@@ -42,7 +42,11 @@ struct Section {
 class MemberDetails: UITableViewController, IndicatorInfoProvider {
     var itemInfo: IndicatorInfo = "Member Details"
     var sections = [Section]()
+    let refreshControl1 = UIRefreshControl()
     let sharedInstance = CoreDataManager.sharedInstance;
+    let constants = Constants()
+    let webserviceManager = WebserviceManager();
+    let managedContext = CoreDataManager.sharedInstance.persistentContainer.viewContext
     
     init(itemInfo: IndicatorInfo) {
         self.itemInfo = itemInfo
@@ -60,7 +64,20 @@ class MemberDetails: UITableViewController, IndicatorInfoProvider {
         tableView.estimatedRowHeight = 100.0
         tableView.rowHeight = UITableViewAutomaticDimension
         tableView.layoutMargins = UIEdgeInsets.zero
-        tableView.separatorInset = UIEdgeInsets.init(top: 0, left: 5, bottom: 0, right: 5)
+        tableView.separatorInset = UIEdgeInsets.init(top: 0, left: 10, bottom: 0, right: 10)
+        tableView.tableFooterView = UIView (frame: CGRect.zero)
+        
+        // Add to Table View
+        if #available(iOS 10.0, *) {
+            tableView.refreshControl = refreshControl1
+        } else {
+            tableView.addSubview(refreshControl1)
+        }
+        refreshControl1.tintColor = UIColor(red:0.25, green:0.72, blue:0.85, alpha:1.0)
+        refreshControl1.attributedTitle = NSAttributedString(string: "Refershing Member Details ...")
+        // Configure Refresh Control
+        self.refreshControl1.addTarget(self, action: #selector(self.refreshMemberDetails(refreshControl:)), for: .valueChanged)
+        
         var dependentsArray = Array<String>()
         var relationArray = Array<String>()
         var genderArray = Array<String>()
@@ -103,6 +120,29 @@ class MemberDetails: UITableViewController, IndicatorInfoProvider {
         } catch let error as NSError {
             print("Could not fetch. \(error), \(error.userInfo)")
         }
+        
+    }
+    
+    func refreshMemberDetails(refreshControl: UIRefreshControl) {
+        var results : [MASTER_DATA]
+        let studentUniversityFetchRequest: NSFetchRequest<MASTER_DATA>  = MASTER_DATA.fetchRequest()
+        studentUniversityFetchRequest.returnsObjectsAsFaults = false
+        do {
+            results = try self.managedContext.fetch(studentUniversityFetchRequest)
+            let mobileNumber = results.first!.mobileNumber
+            let staffID = results.first!.staffID
+            let clientID = results.first!.clientID
+            
+            if (mobileNumber != "" && staffID != ""  && clientID != "" ){
+                self.staffDetails(actionId: "staff_details", phoneNumber: mobileNumber!, staffID: staffID!, clientID: clientID!)
+                return
+            } else {
+                LoadingIndicatorView.hideInMain()
+                return
+            }
+        } catch let error as NSError {
+            print ("Could not fetch \(error), \(error.userInfo)")
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -111,6 +151,89 @@ class MemberDetails: UITableViewController, IndicatorInfoProvider {
     
     func indicatorInfo(for pagerTabStripController: PagerTabStripViewController) -> IndicatorInfo {
         return itemInfo
+    }
+    
+    func staffDetails(actionId: String, phoneNumber: String, staffID: String, clientID: String) -> Void {
+        //        LoadingIndicatorView.show("Fetching Data...")
+        
+        let endPoint: String = {
+            return "\(constants.BASE_URL)?action_id=\(actionId)&mobile_no=\(phoneNumber)&staff_id=\(staffID)&client_no=\(clientID)"
+        }()
+        
+        self.webserviceManager.login(type: "double", endPoint: endPoint) { (result) in
+            switch result {
+            case .Success(let data, let require_update):
+                if (require_update == "yes") {
+                    self.sharedInstance.clearStaffDetails()
+                    self.sharedInstance.saveInStaffDataWith(array: [data])
+                    
+                    var dependentsArray = Array<String>()
+                    var relationArray = Array<String>()
+                    var genderArray = Array<String>()
+                    var policyNoArray = Array<String>()
+                    var nationalityArray = Array<String>()
+                    var mobileArray = Array<String>()
+                    var emailArray = Array<String>()
+                    
+                    // Initialize the sections array
+                    let managedContext =
+                        self.sharedInstance.persistentContainer.viewContext
+                    
+                    let fetchRequest =
+                        NSFetchRequest<NSManagedObject>(entityName: "STAFF_DETAILS")
+                    do {
+                        let people = try managedContext.fetch(fetchRequest)
+                        for people in people {
+                            let memberName = (people.value(forKey: "member_name") ?? "") as! String;
+                            let gender = (people.value(forKey: "dender") ?? "") as! String;
+                            var dependents  = [DEPENDENT_DETAILS]() // Where Locations = your NSManaged Class
+                            
+                            let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "DEPENDENT_DETAILS")
+                            do {
+                                dependents = try managedContext.fetch(fetchRequest) as! [DEPENDENT_DETAILS]
+                                for dependents in dependents {
+                                    dependentsArray.append(dependents.member_name!)
+                                    relationArray.append(dependents.relationship!)
+                                    genderArray.append(dependents.dender!)
+                                    policyNoArray.append(dependents.policy_ref!)
+                                    nationalityArray.append(dependents.nationality!)
+                                    mobileArray.append(dependents.phone!)
+                                    emailArray.append(dependents.email!)
+                                }
+                            } catch let error as NSError {
+                                print("Could not fetch. \(error), \(error.userInfo)")
+                            }
+                            self.sections.removeAll(keepingCapacity: false)
+                            self.sections.append(Section(name: memberName, gender: gender, items: dependentsArray, relationship: relationArray, genderArray: genderArray, policyNo: policyNoArray, nationality: nationalityArray, mobile: mobileArray, email: emailArray))
+                            self.refreshControl1.endRefreshing()
+                            self.tableView.reloadData()
+                            return
+                        }
+                    } catch let error as NSError {
+                        print("Could not fetch. \(error), \(error.userInfo)")
+                    }
+                    self.refreshControl1.endRefreshing()
+                    self.tableView.reloadData()
+                }
+            case .Error(let message):
+                self.refreshControl1.endRefreshing()
+                self.alertDialog (heading: "", message: message);
+            default:
+                self.refreshControl1.endRefreshing()
+                LoadingIndicatorView.hideInMain()
+            }
+        }
+    }
+    
+    func alertDialog (heading: String, message: String) {
+        OperationQueue.main.addOperation {
+            self.refreshControl1.endRefreshing()
+            let alertController = UIAlertController(title: heading, message: message, preferredStyle: .alert)
+            let defaultAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+            alertController.addAction(defaultAction)
+            
+            self.present(alertController, animated: true, completion: nil)
+        }
     }
 
 }
@@ -165,17 +288,12 @@ extension MemberDetails {
         let cell = self.tableView.dequeueReusableHeaderFooterView(withIdentifier: "MemberGroup")
         let header = cell as! MemberGroup
         header.name.text = sections[section].name
-        let childCount = sections[section].items.count
-        if (childCount > 0) {
-            header.group_icon.image = UIImage(named: "family")
+        if (sections[section].gender == "M") {
+            header.group_icon.image = UIImage(named: "male")
+        } else if (sections[section].gender == "F") {
+            header.group_icon.image = UIImage(named: "female")
         } else {
-            if (sections[section].gender == "M") {
-                header.group_icon.image = UIImage(named: "male")
-            } else if (sections[section].gender == "F") {
-                header.group_icon.image = UIImage(named: "female")
-            } else {
-                header.group_icon.image = UIImage(named: "group_icon")
-            }
+            header.group_icon.image = UIImage(named: "group_icon")
         }
         
         return header
@@ -186,7 +304,7 @@ extension MemberDetails {
     }
     
     override func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
-        return 1.0
+        return 2.0
     }
     
     // click cell

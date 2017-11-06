@@ -33,7 +33,7 @@ class Information: UITableViewController, IndicatorInfoProvider, UIDocumentInter
         tableView.backgroundColor = .white
         tableView.preservesSuperviewLayoutMargins = false
         tableView.layoutMargins = UIEdgeInsets.zero
-        tableView.separatorInset = UIEdgeInsets.init(top: 0, left: 5, bottom: 0, right: 5)
+        tableView.separatorInset = UIEdgeInsets.init(top: 0, left: 10, bottom: 0, right: 10)
         tableView.tableFooterView = UIView (frame: CGRect.zero)
         // trigger load
         load()

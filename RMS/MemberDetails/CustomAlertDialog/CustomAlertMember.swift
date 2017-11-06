@@ -20,7 +20,6 @@ class CustomAlertMember : UIViewController {
     var mobile = ""
     var email = ""
     
-    @IBOutlet weak var profileIcon: UIImageView!
     @IBOutlet weak var policyNo: UILabel!
     @IBOutlet weak var nameLabel: UILabel!
     @IBOutlet weak var relationLabel: UILabel!
@@ -59,19 +58,5 @@ class CustomAlertMember : UIViewController {
         nationalityLabel.text = nationality
         mobileLabel.text = mobile
         emailLabel.text = email
-        if (relation == "Son") {
-            profileIcon.image = UIImage(named: "")
-        } else {
-            profileIcon.image = UIImage(named: "")
-        }
-        if (relation == "Son") {
-            profileIcon.image = UIImage(named: "child-male")
-        } else if (relation == "Daughter") {
-            profileIcon.image = UIImage(named: "child-female")
-        } else if (relation == "Wife") {
-            profileIcon.image = UIImage(named: "female")
-        } else if (relation == "Husband") {
-            profileIcon.image = UIImage(named: "male")
-        }
     }
 }

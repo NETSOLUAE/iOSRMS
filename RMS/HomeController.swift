@@ -17,6 +17,7 @@ class HomeController: ButtonBarPagerTabStripViewController {
     let sharedInstance = CoreDataManager.sharedInstance;
     let managedContext = CoreDataManager.sharedInstance.persistentContainer.viewContext
     
+    @IBOutlet weak var scrollView: UIScrollView!
     @IBAction func profileMenu(_ sender: Any) {
         self.slideMenuController()?.openLeft()
     }
@@ -49,8 +50,8 @@ class HomeController: ButtonBarPagerTabStripViewController {
         
         changeCurrentIndexProgressive = {(oldCell: ButtonBarViewCell?, newCell: ButtonBarViewCell?, progressPercentage: CGFloat, changeCurrentIndex: Bool, animated: Bool) -> Void in
             guard changeCurrentIndex == true else { return }
-            oldCell?.imageView.image = oldCell?.imageView.image
-            newCell?.imageView.image = newCell?.imageView.highlightedImage
+            oldCell?.imageView.tintColor = .white
+            newCell?.imageView.tintColor = .white
         }
         isViewDidLaod = true
         super.viewDidLoad()
@@ -89,7 +90,7 @@ class HomeController: ButtonBarPagerTabStripViewController {
     override func viewControllers(for pagerTabStripController: PagerTabStripViewController) -> [UIViewController] {
         let child_1 = MemberDetails(itemInfo: IndicatorInfo(title: " Member Details", image: UIImage(named: "member_details"), highlightedImage: UIImage(named: "member_selected")))
         let child_2 = Information(style: .plain, itemInfo: IndicatorInfo(title: " Information", image: UIImage(named: "Information"), highlightedImage: UIImage(named: "information-selected")))
-        let child_3 = TableBenifits(itemInfo: IndicatorInfo(title: " Policy Details", image: UIImage(named: "PolicyDetails"), highlightedImage: UIImage(named: "policy-selected")))
+        let child_3 = EbPolicyDetail(itemInfo: IndicatorInfo(title: " Policy Details", image: UIImage(named: "PolicyDetails"), highlightedImage: UIImage(named: "policy-selected")))
         let child_4 = ClaimDetails(style: .plain, itemInfo: IndicatorInfo(title: " Claim Details", image: UIImage(named: "claim_details"), highlightedImage: UIImage(named: "claim-selected")))
         let child_5 = Preapprovals(style: .plain, itemInfo: IndicatorInfo(title: " Preapproval", image: UIImage(named: "PreApproval"), highlightedImage: UIImage(named: "preapproval-selected")))
         let child_6 = PostComments(itemInfo: IndicatorInfo(title: " Post Comments", image: UIImage(named: "post_comments"), highlightedImage: UIImage(named: "post-selected")))

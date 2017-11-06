@@ -24,10 +24,13 @@ class RegistrationController: UIViewController, UITextViewDelegate, UITextFieldD
     @IBOutlet weak var password: UITextField!
     @IBOutlet weak var confirmPassword: UITextField!
     @IBOutlet weak var datePicker: UIDatePicker!
-    @IBOutlet weak var dateTool: UIToolbar!
+    @IBOutlet weak var dateTool: UIView!
+    @IBOutlet weak var userName: UITextField!
+    var activeField: UITextField?
     
     @IBAction func selectDate(_ sender: Any) {
         self.view.endEditing(true)
+        deregisterFromKeyboardNotifications()
         var date = ""
         var color = ""
         if (self.dateSelected == "") {
@@ -43,6 +46,7 @@ class RegistrationController: UIViewController, UITextViewDelegate, UITextFieldD
         self.dateTool.isHidden = !self.dateTool.isHidden
     }
     @IBAction func done(_ sender: Any) {
+        registerForKeyboardNotifications()
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "dd-MM-yyyy"
         let strDate = dateFormatter.string(from: datePicker.date)
@@ -53,6 +57,7 @@ class RegistrationController: UIViewController, UITextViewDelegate, UITextFieldD
         self.dateTool.isHidden = !self.dateTool.isHidden
     }
     @IBAction func cancel(_ sender: Any) {
+        registerForKeyboardNotifications()
         self.datePicker.isHidden = !self.datePicker.isHidden
         self.dateTool.isHidden = !self.dateTool.isHidden
     }
@@ -65,6 +70,7 @@ class RegistrationController: UIViewController, UITextViewDelegate, UITextFieldD
         companyName.delegate = self
         email.delegate = self
         nationalId.delegate = self
+        userName.delegate = self
         password.delegate = self
         confirmPassword.delegate = self
         self.datePicker.isHidden = true
@@ -95,6 +101,11 @@ class RegistrationController: UIViewController, UITextViewDelegate, UITextFieldD
         nationalId.leftView = paddingView4
         nationalId.leftViewMode = UITextFieldViewMode.always
         
+        let paddingView7 = UIView()
+        paddingView7.frame = CGRect(x: 0, y: 0, width: 5, height: self.name.frame.size.height)
+        userName.leftView = paddingView7
+        userName.leftViewMode = UITextFieldViewMode.always
+        
         let paddingView5 = UIView()
         paddingView5.frame = CGRect(x: 0, y: 0, width: 5, height: self.name.frame.size.height)
         password.leftView = paddingView5
@@ -104,23 +115,21 @@ class RegistrationController: UIViewController, UITextViewDelegate, UITextFieldD
         paddingView6.frame = CGRect(x: 0, y: 0, width: 5, height: self.name.frame.size.height)
         confirmPassword.leftView = paddingView6
         confirmPassword.leftViewMode = UITextFieldViewMode.always
-        
-//        let date = Date.init(timeIntervalSinceNow: 1)
-//        let dateFormatter = DateFormatter()
-//        dateFormatter.dateFormat = "dd-MM-yyyy"
-//        let strDate = dateFormatter.string(from: date)
-//        self.dateSelected = strDate
-//        self.dob.setTitle(self.dateSelected, for: .normal)
-//        self.dob.setTitleColor(UIColor().HexToColor(hexString: "#000000", alpha: 1.0), for: .normal)
         self.datePicker.maximumDate = Date()
         
         self.datePicker.backgroundColor = UIColor().HexToColor(hexString: "#EBEBEB", alpha: 1.0)
         self.dateTool.backgroundColor = UIColor().HexToColor(hexString: "#EBEBEB", alpha: 1.0)
+        registerForKeyboardNotifications()
         addDoneButtonOnKeyboard()
         hideKeyboard()
         
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        deregisterFromKeyboardNotifications()
     }
     
     func textFieldShouldReturn(_ scoreText: UITextField) -> Bool {
@@ -133,10 +142,10 @@ class RegistrationController: UIViewController, UITextViewDelegate, UITextFieldD
         } else if (scoreText == self.email) {
             email.resignFirstResponder()
             nationalId.becomeFirstResponder()
-        } else if (scoreText == self.nationalId) {
-            nationalId.resignFirstResponder()
+        } else if (scoreText == self.userName) {
+            userName.resignFirstResponder()
             password.becomeFirstResponder()
-        }  else if (scoreText == self.password) {
+        } else if (scoreText == self.password) {
             password.resignFirstResponder()
             confirmPassword.becomeFirstResponder()
         } else if (scoreText == self.confirmPassword) {
@@ -156,6 +165,16 @@ class RegistrationController: UIViewController, UITextViewDelegate, UITextFieldD
         return true
     }
     
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        
+        if(textField == mobileNumber) {//This makes the new text black.
+            guard let text = textField.text else { return true }
+            let newLength = text.characters.count + string.characters.count - range.length
+            return newLength <= constants.limitLength
+        }
+        return true
+    }
+    
     @IBAction func submit(_ sender: Any) {
         self.view.endEditing(true)
         let name1 = name.text ?? ""
@@ -163,26 +182,78 @@ class RegistrationController: UIViewController, UITextViewDelegate, UITextFieldD
         let companyName = self.companyName.text ?? ""
         let email1 = email.text ?? ""
         let nationalId1 = nationalId.text ?? ""
+        let userName1 = userName.text ?? ""
         let password1 = password.text ?? ""
         let confirmPassword1 = confirmPassword.text ?? ""
         if ((name1.length) <= 0 || (mobile.length) <= 0 || (self.dateSelected.length) <= 0 || (companyName.length) <= 0 || (companyName.length) <= 0
-             || (email1.length) <= 0 || (nationalId1.length) <= 0 || (password1.length) <= 0 || (confirmPassword1.length) <= 0) {
-            self.showToast(message: "All fileds are mandatory")
+            || (email1.length) <= 0 || (nationalId1.length) <= 0 || (userName1.length) <= 0 || (password1.length) <= 0 || (confirmPassword1.length) <= 0) {
+            self.alertDialog (heading: "", message: self.constants.allFieldsErrorMessage, internalMessage: true, result: "Error");
         } else if (password1 != confirmPassword1){
-            self.alertDialog (heading: "", message: "Entered Password and Confirm Password does not match");
+            self.alertDialog (heading: "", message: self.constants.passwordMismatchError, internalMessage: true, result: "Error");
         } else if (!isValidEmail(email: email1)){
-            self.alertDialog (heading: "", message: "Please Enter Valid Email Address");
-        } else if ((mobile.length) < 11) {
-            self.alertDialog (heading: "", message: "Please enter valid mobile number");
+            self.alertDialog (heading: "", message: self.constants.validEmailErrorMessage, internalMessage: true, result: "Error");
+        } else if (!constants.isValidMobileNumber(mobile: mobile)) {
+            self.alertDialog (heading: "", message: self.constants.validMobileNumberError, internalMessage: true, result: "Error");
+        } else if (confirmPassword1.length < 6) {
+            self.alertDialog (heading: "", message: self.constants.passwordLengthError, internalMessage: true, result: "Error");
         } else {
-            self.sendRegistration(actionId: "new_registration", name: name1, dob: self.dateSelected, phoneNumber: mobile, companyName: companyName, email1: email1, nationalId1: nationalId1, password1: password1)
+            self.view.endEditing(true)
+            deregisterFromKeyboardNotifications()
+            DispatchQueue.main.async(execute: {
+                /* Do some heavy work (you are now on a background queue) */
+                LoadingIndicatorView.show(self.constants.registrationLoading)
+            });
+            self.sendRegistration(actionId: "new_registration", name: name1, dob: self.dateSelected, phoneNumber: mobile, companyName: companyName, email1: email1, nationalId1: nationalId1, userName: userName1, password1: password1)
         }
     }
     
-    func sendRegistration(actionId: String, name: String, dob: String, phoneNumber: String, companyName: String, email1: String, nationalId1: String, password1: String) -> Void {
+    func registerForKeyboardNotifications(){
+        //Adding notifies on keyboard appearing
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWasShown(notification:)), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillBeHidden(notification:)), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
+    }
+    
+    func deregisterFromKeyboardNotifications(){
+        //Removing notifies on keyboard appearing
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIKeyboardWillShow, object: nil)
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIKeyboardWillHide, object: nil)
+    }
+    
+    func keyboardWasShown(notification: NSNotification){
+        //Need to calculate keyboard exact size due to Apple suggestions
+        self.background.isScrollEnabled = true
+        var info = notification.userInfo!
+        let keyboardSize = (info[UIKeyboardFrameBeginUserInfoKey] as? NSValue)?.cgRectValue.size
+        let contentInsets : UIEdgeInsets = UIEdgeInsetsMake(0.0, 0.0, keyboardSize!.height*1.8, 0.0)
+        
+        self.background.contentInset = contentInsets
+        self.background.scrollIndicatorInsets = contentInsets
+        
+        var aRect : CGRect = self.view.frame
+        aRect.size.height -= keyboardSize!.height
+        if let activeField = self.activeField {
+            if (!aRect.contains(activeField.frame.origin)){
+                self.background.scrollRectToVisible(activeField.frame, animated: true)
+            }
+        }
+    }
+    
+    func keyboardWillBeHidden(notification: NSNotification){
+        //Once keyboard disappears, restore original positions
+        var info = notification.userInfo!
+        let keyboardSize = (info[UIKeyboardFrameBeginUserInfoKey] as? NSValue)?.cgRectValue.size
+        let contentInsets : UIEdgeInsets = UIEdgeInsetsMake(0.0, 0.0, -keyboardSize!.height, 0.0)
+        self.background.contentInset = contentInsets
+        self.background.scrollIndicatorInsets = contentInsets
+        self.view.endEditing(true)
+        self.background.contentInset.bottom = keyboardSize!.height
+        //        self.scrollView.isScrollEnabled = false
+    }
+    
+    func sendRegistration(actionId: String, name: String, dob: String, phoneNumber: String, companyName: String, email1: String, nationalId1: String, userName: String, password1: String) -> Void {
         
         let endPoint1: String = {
-            return "\(constants.BASE_URL)?action_id=\(actionId)&mobile_no=\(phoneNumber)&full_name=\(name)&date_of_birth=\(dob)&company_name=\(companyName)&national_id=\(nationalId1)&email=\(email1)&password=\(password1)"
+            return "\(constants.BASE_URL)?action_id=\(actionId)&mobile_no=\(phoneNumber)&full_name=\(name)&date_of_birth=\(dob)&company_name=\(companyName)&national_id=\(nationalId1)&email=\(email1)&password=\(password1)&username=\(userName)"
         }()
         let endPoint = NSString(format: endPoint1 as NSString).addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
         
@@ -190,60 +261,55 @@ class RegistrationController: UIViewController, UITextViewDelegate, UITextFieldD
             LoadingIndicatorView.hideInMain()
             switch result {
             case .SuccessSingle( _, let message):
-                self.alertDialog (heading: "", message: message);
+                self.alertDialog (heading: "", message: message, internalMessage: false, result: "Success");
             case .Error(let message):
-                self.alertDialog (heading: "", message: message);
+                self.alertDialog (heading: "", message: message, internalMessage: false, result: "Success");
             default:
-                self.alertDialog (heading: "", message: self.constants.errorMessage);
+                self.alertDialog (heading: "", message: self.constants.errorMessage, internalMessage: false, result: "Error");
                 
             }
         }
+        registerForKeyboardNotifications()
     }
 
-    func alertDialog (heading: String, message: String) {
+    func alertDialog (heading: String, message: String, internalMessage: Bool, result: String) {
         OperationQueue.main.addOperation {
-            self.name.text  = ""
-            self.mobileNumber.text  = ""
-            self.companyName.text  = ""
-            self.email.text  = ""
-            self.nationalId.text  = ""
-            self.password.text  = ""
-            self.confirmPassword.text  = ""
-            self.name.placeholder  = "Your Name"
-            self.mobileNumber.placeholder  = "Mobile Number"
-            self.companyName.placeholder = "Company Name"
-            self.email.placeholder = "Email"
-            self.nationalId.placeholder  = "National ID"
-            self.password.placeholder  = "Password"
-            self.confirmPassword.placeholder  = "Confirm Password"
-            self.dob.setTitle("Date of Birth", for: .normal)
-            self.dob.setTitleColor(UIColor().HexToColor(hexString: "#C7C7CD", alpha: 1.0), for: .normal)
-            
             let alertController = UIAlertController(title: heading, message: message, preferredStyle: .alert)
-            let defaultAction = UIAlertAction(title: "OK", style: .default, handler: nil)
-            alertController.addAction(defaultAction)
+            if (!internalMessage) {
+                if (result == "Success") {
+                    self.name.text  = ""
+                    self.mobileNumber.text  = ""
+                    self.companyName.text  = ""
+                    self.email.text  = ""
+                    self.nationalId.text  = ""
+                    self.userName.text  = ""
+                    self.password.text  = ""
+                    self.confirmPassword.text  = ""
+                    self.name.placeholder  = "Your Name"
+                    self.mobileNumber.placeholder  = "Mobile Number"
+                    self.companyName.placeholder = "Company Name"
+                    self.email.placeholder = "Email"
+                    self.nationalId.placeholder  = "National ID"
+                    self.userName.placeholder  = "User Name"
+                    self.password.placeholder  = "Password"
+                    self.confirmPassword.placeholder  = "Confirm Password"
+                    self.dob.setTitle("Date of Birth", for: .normal)
+                    self.dob.setTitleColor(UIColor().HexToColor(hexString: "#C7C7CD", alpha: 1.0), for: .normal)
+                }
+                let defaultAction = UIAlertAction(title: "OK", style: .default, handler: { (action: UIAlertAction!) in
+                    currentSelection.name = "ebclaims"
+                    let storyboard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
+                    let vc: UIViewController = storyboard.instantiateViewController(withIdentifier: "LoginController") as UIViewController
+                    self.present(vc, animated: true, completion: nil)
+                })
+                alertController.addAction(defaultAction)
+            } else {
+                let defaultAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+                alertController.addAction(defaultAction)
+            }
             
             self.present(alertController, animated: true, completion: nil)
         }
-    }
-    
-    func showToast(message : String) {
-        
-        let toastLabel = UILabel(frame: CGRect(x: self.view.frame.size.width/2 - 150, y: self.view.frame.size.height, width: 280, height: 35))
-        toastLabel.backgroundColor = UIColor.black.withAlphaComponent(0.6)
-        toastLabel.textColor = UIColor.white
-        toastLabel.textAlignment = .center;
-        toastLabel.font = UIFont(name: "Montserrat-Light", size: 12.0)
-        toastLabel.text = message
-        toastLabel.alpha = 1.0
-        toastLabel.layer.cornerRadius = 10;
-        toastLabel.clipsToBounds  =  true
-        self.view.addSubview(toastLabel)
-        UIView.animate(withDuration: 4.0, delay: 0.1, options: .curveEaseOut, animations: {
-            toastLabel.alpha = 0.0
-        }, completion: {(isCompleted) in
-            toastLabel.removeFromSuperview()
-        })
     }
     
     func addDoneButtonOnKeyboard() {
@@ -262,12 +328,17 @@ class RegistrationController: UIViewController, UITextViewDelegate, UITextFieldD
         doneToolbar.sizeToFit()
         
         self.mobileNumber.inputAccessoryView = doneToolbar
+        self.nationalId.inputAccessoryView = doneToolbar
     }
     
     func doneButtonAction() {
         if (mobileNumber.isFirstResponder) {
             mobileNumber.resignFirstResponder()
             companyName.becomeFirstResponder()
+        }
+        if (nationalId.isFirstResponder) {
+            nationalId.resignFirstResponder()
+            userName.becomeFirstResponder()
         }
     }
     

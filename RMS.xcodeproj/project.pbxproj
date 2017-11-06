@@ -81,12 +81,17 @@
 		9A124E731F4C719600AC18B5 /* AccountSummaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A124E721F4C719600AC18B5 /* AccountSummaryView.swift */; };
 		9A3DB62E1F68202600C059D0 /* CustomAlertMember.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9A3DB62D1F68202600C059D0 /* CustomAlertMember.xib */; };
 		9A3DB6301F68203800C059D0 /* CustomAlertMember.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A3DB62F1F68203800C059D0 /* CustomAlertMember.swift */; };
+		9A4A272A1FAF252000A76F7B /* EB_POLICY_CHILD+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A4A27281FAF252000A76F7B /* EB_POLICY_CHILD+CoreDataClass.swift */; };
+		9A4A272B1FAF252000A76F7B /* EB_POLICY_CHILD+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A4A27291FAF252000A76F7B /* EB_POLICY_CHILD+CoreDataProperties.swift */; };
 		9A5245D31F03C4720038F044 /* RMSTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A5245D21F03C4720038F044 /* RMSTests.swift */; };
 		9A5245DE1F03C4720038F044 /* RMSUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A5245DD1F03C4720038F044 /* RMSUITests.swift */; };
 		9A7402C21F68F95A00B87A55 /* MemberChild.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9A7402C11F68F95A00B87A55 /* MemberChild.xib */; };
 		9A7402C41F68F96A00B87A55 /* MemberChild.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A7402C31F68F96A00B87A55 /* MemberChild.swift */; };
 		9A7402C81F69219800B87A55 /* CustomAlertForget.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9A7402C71F69219800B87A55 /* CustomAlertForget.xib */; };
 		9A7402CA1F6921B400B87A55 /* CustomAlertForget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A7402C91F6921B400B87A55 /* CustomAlertForget.swift */; };
+		9A86B7351F8CAAF60071679E /* FAQController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A86B7341F8CAAF60071679E /* FAQController.swift */; };
+		9A86B7371F8CAB720071679E /* ExpandableHeaderViewFAQ.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A86B7361F8CAB720071679E /* ExpandableHeaderViewFAQ.swift */; };
+		9A86B7391F8CAC930071679E /* FAQ.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A86B7381F8CAC930071679E /* FAQ.swift */; };
 		9A91E7191F4EBF2F007CEC74 /* InstallmentView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9A91E7181F4EBF2F007CEC74 /* InstallmentView.xib */; };
 		9A91E71B1F4EBF73007CEC74 /* InstallmentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A91E71A1F4EBF73007CEC74 /* InstallmentView.swift */; };
 		9A91E71E1F4EE799007CEC74 /* RMS.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 9A91E71C1F4EE799007CEC74 /* RMS.xcdatamodeld */; };
@@ -121,6 +126,13 @@
 		9A91E76D1F4EFDDD007CEC74 /* STAFF_DETAILS_POLICY_LINES+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A91E7651F4EFDDD007CEC74 /* STAFF_DETAILS_POLICY_LINES+CoreDataClass.swift */; };
 		9A91E76E1F4EFDDD007CEC74 /* STAFF_DETAILS_POLICY_LINES+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A91E7661F4EFDDD007CEC74 /* STAFF_DETAILS_POLICY_LINES+CoreDataProperties.swift */; };
 		9A91E7701F4F019D007CEC74 /* HomeControllerLines.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A91E76F1F4F019D007CEC74 /* HomeControllerLines.swift */; };
+		9AA213791FAD9A39002B23F9 /* EB_POLICY_GROUP+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AA213751FAD9A39002B23F9 /* EB_POLICY_GROUP+CoreDataClass.swift */; };
+		9AA2137A1FAD9A39002B23F9 /* EB_POLICY_GROUP+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AA213761FAD9A39002B23F9 /* EB_POLICY_GROUP+CoreDataProperties.swift */; };
+		9AA2137D1FAD9F56002B23F9 /* EbPolicyDetailGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AA2137C1FAD9F56002B23F9 /* EbPolicyDetailGroup.swift */; };
+		9AA2137F1FAD9F76002B23F9 /* EbPolicyDetailChild.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AA2137E1FAD9F76002B23F9 /* EbPolicyDetailChild.swift */; };
+		9AA213811FAD9F89002B23F9 /* EbPolicyDetailChild.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9AA213801FAD9F89002B23F9 /* EbPolicyDetailChild.xib */; };
+		9AA213831FAD9FC3002B23F9 /* EbPolicyDetailGroup.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9AA213821FAD9FC3002B23F9 /* EbPolicyDetailGroup.xib */; };
+		9AA213851FAD9FDB002B23F9 /* EbPolicyDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AA213841FAD9FDB002B23F9 /* EbPolicyDetail.swift */; };
 		9AAFB3971F53008000AFE2E3 /* UIViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AAFB3961F53008000AFE2E3 /* UIViewController.swift */; };
 		9AB5AD831F67BF440037E68F /* RegistrationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AB5AD821F67BF440037E68F /* RegistrationController.swift */; };
 		9AE5BF091F4D9AA50045AEC2 /* ButtonBarPagerTabStripViewControllerSalary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AE5BF081F4D9AA50045AEC2 /* ButtonBarPagerTabStripViewControllerSalary.swift */; };
@@ -243,6 +255,8 @@
 		9A124E721F4C719600AC18B5 /* AccountSummaryView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AccountSummaryView.swift; path = AccountSummary/AccountSummaryView.swift; sourceTree = "<group>"; };
 		9A3DB62D1F68202600C059D0 /* CustomAlertMember.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = CustomAlertMember.xib; path = CustomAlertDialog/CustomAlertMember.xib; sourceTree = "<group>"; };
 		9A3DB62F1F68203800C059D0 /* CustomAlertMember.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CustomAlertMember.swift; path = CustomAlertDialog/CustomAlertMember.swift; sourceTree = "<group>"; };
+		9A4A27281FAF252000A76F7B /* EB_POLICY_CHILD+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "EB_POLICY_CHILD+CoreDataClass.swift"; path = "Controller/EB_POLICY_CHILD+CoreDataClass.swift"; sourceTree = "<group>"; };
+		9A4A27291FAF252000A76F7B /* EB_POLICY_CHILD+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "EB_POLICY_CHILD+CoreDataProperties.swift"; path = "Controller/EB_POLICY_CHILD+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		9A5245B71F03C4720038F044 /* RMS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RMS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9A5245CE1F03C4720038F044 /* RMSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RMSTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		9A5245D21F03C4720038F044 /* RMSTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RMSTests.swift; sourceTree = "<group>"; };
@@ -254,6 +268,9 @@
 		9A7402C31F68F96A00B87A55 /* MemberChild.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MemberChild.swift; sourceTree = "<group>"; };
 		9A7402C71F69219800B87A55 /* CustomAlertForget.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CustomAlertForget.xib; sourceTree = "<group>"; };
 		9A7402C91F6921B400B87A55 /* CustomAlertForget.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomAlertForget.swift; sourceTree = "<group>"; };
+		9A86B7341F8CAAF60071679E /* FAQController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FAQController.swift; path = FAQ/FAQController.swift; sourceTree = "<group>"; };
+		9A86B7361F8CAB720071679E /* ExpandableHeaderViewFAQ.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ExpandableHeaderViewFAQ.swift; path = FAQ/ExpandableHeaderViewFAQ.swift; sourceTree = "<group>"; };
+		9A86B7381F8CAC930071679E /* FAQ.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FAQ.swift; path = FAQ/FAQ.swift; sourceTree = "<group>"; };
 		9A91E7181F4EBF2F007CEC74 /* InstallmentView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = InstallmentView.xib; path = AccountSummary/InstallmentView.xib; sourceTree = "<group>"; };
 		9A91E71A1F4EBF73007CEC74 /* InstallmentView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = InstallmentView.swift; path = AccountSummary/InstallmentView.swift; sourceTree = "<group>"; };
 		9A91E71D1F4EE799007CEC74 /* RMS.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = RMS.xcdatamodel; sourceTree = "<group>"; };
@@ -288,6 +305,13 @@
 		9A91E7651F4EFDDD007CEC74 /* STAFF_DETAILS_POLICY_LINES+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "STAFF_DETAILS_POLICY_LINES+CoreDataClass.swift"; path = "Controller/STAFF_DETAILS_POLICY_LINES+CoreDataClass.swift"; sourceTree = "<group>"; };
 		9A91E7661F4EFDDD007CEC74 /* STAFF_DETAILS_POLICY_LINES+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "STAFF_DETAILS_POLICY_LINES+CoreDataProperties.swift"; path = "Controller/STAFF_DETAILS_POLICY_LINES+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		9A91E76F1F4F019D007CEC74 /* HomeControllerLines.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HomeControllerLines.swift; sourceTree = "<group>"; };
+		9AA213751FAD9A39002B23F9 /* EB_POLICY_GROUP+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "EB_POLICY_GROUP+CoreDataClass.swift"; path = "Controller/EB_POLICY_GROUP+CoreDataClass.swift"; sourceTree = "<group>"; };
+		9AA213761FAD9A39002B23F9 /* EB_POLICY_GROUP+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "EB_POLICY_GROUP+CoreDataProperties.swift"; path = "Controller/EB_POLICY_GROUP+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		9AA2137C1FAD9F56002B23F9 /* EbPolicyDetailGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EbPolicyDetailGroup.swift; sourceTree = "<group>"; };
+		9AA2137E1FAD9F76002B23F9 /* EbPolicyDetailChild.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EbPolicyDetailChild.swift; sourceTree = "<group>"; };
+		9AA213801FAD9F89002B23F9 /* EbPolicyDetailChild.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = EbPolicyDetailChild.xib; sourceTree = "<group>"; };
+		9AA213821FAD9FC3002B23F9 /* EbPolicyDetailGroup.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = EbPolicyDetailGroup.xib; sourceTree = "<group>"; };
+		9AA213841FAD9FDB002B23F9 /* EbPolicyDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EbPolicyDetail.swift; sourceTree = "<group>"; };
 		9AAFB3961F53008000AFE2E3 /* UIViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIViewController.swift; sourceTree = "<group>"; };
 		9AB5AD821F67BF440037E68F /* RegistrationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RegistrationController.swift; sourceTree = "<group>"; };
 		9AE5BF081F4D9AA50045AEC2 /* ButtonBarPagerTabStripViewControllerSalary.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ButtonBarPagerTabStripViewControllerSalary.swift; sourceTree = "<group>"; };
@@ -410,6 +434,7 @@
 		9A5245B91F03C4720038F044 /* RMS */ = {
 			isa = PBXGroup;
 			children = (
+				9AA2137B1FAD9EEF002B23F9 /* EbPolicyDetails */,
 				9A124BC81F4C564E00AC18B5 /* AccountSummary */,
 				9A124BC71F4C562F00AC18B5 /* PolicyDetailsSalary */,
 				9AD1B58C1F49701A00945C3A /* Controller */,
@@ -423,6 +448,7 @@
 				9ADDAF1F1F1758F300366FC6 /* PreApprovals */,
 				9ADDAF001F1756DF00366FC6 /* CustomAlertDialog */,
 				9ADDAEF71F17563A00366FC6 /* ContactInfo */,
+				9A86B7331F8CAAC80071679E /* FAQ */,
 				9A124E3A1F4C660C00AC18B5 /* AppDelegate.swift */,
 				9A124E421F4C660C00AC18B5 /* LaunchScreen.swift */,
 				9A124E441F4C660C00AC18B5 /* LoginController.swift */,
@@ -462,9 +488,35 @@
 			path = RMSUITests;
 			sourceTree = "<group>";
 		};
+		9A86B7331F8CAAC80071679E /* FAQ */ = {
+			isa = PBXGroup;
+			children = (
+				9A86B7341F8CAAF60071679E /* FAQController.swift */,
+				9A86B7361F8CAB720071679E /* ExpandableHeaderViewFAQ.swift */,
+				9A86B7381F8CAC930071679E /* FAQ.swift */,
+			);
+			name = FAQ;
+			sourceTree = "<group>";
+		};
+		9AA2137B1FAD9EEF002B23F9 /* EbPolicyDetails */ = {
+			isa = PBXGroup;
+			children = (
+				9AA2137C1FAD9F56002B23F9 /* EbPolicyDetailGroup.swift */,
+				9AA213821FAD9FC3002B23F9 /* EbPolicyDetailGroup.xib */,
+				9AA2137E1FAD9F76002B23F9 /* EbPolicyDetailChild.swift */,
+				9AA213801FAD9F89002B23F9 /* EbPolicyDetailChild.xib */,
+				9AA213841FAD9FDB002B23F9 /* EbPolicyDetail.swift */,
+			);
+			path = EbPolicyDetails;
+			sourceTree = "<group>";
+		};
 		9AD1B58C1F49701A00945C3A /* Controller */ = {
 			isa = PBXGroup;
 			children = (
+				9A4A27281FAF252000A76F7B /* EB_POLICY_CHILD+CoreDataClass.swift */,
+				9A4A27291FAF252000A76F7B /* EB_POLICY_CHILD+CoreDataProperties.swift */,
+				9AA213751FAD9A39002B23F9 /* EB_POLICY_GROUP+CoreDataClass.swift */,
+				9AA213761FAD9A39002B23F9 /* EB_POLICY_GROUP+CoreDataProperties.swift */,
 				9A91E75F1F4EFDDD007CEC74 /* MASTER_DATA_LINES+CoreDataClass.swift */,
 				9A91E7601F4EFDDD007CEC74 /* MASTER_DATA_LINES+CoreDataProperties.swift */,
 				9A91E7611F4EFDDD007CEC74 /* ACCOUNT_SUMMARY_LINES+CoreDataClass.swift */,
@@ -724,7 +776,7 @@
 				TargetAttributes = {
 					9A5245B61F03C4720038F044 = {
 						CreatedOnToolsVersion = 8.3.3;
-						DevelopmentTeam = J8MEEP6JJR;
+						DevelopmentTeam = N7AT5BP6DM;
 						ProvisioningStyle = Automatic;
 					};
 					9A5245CD1F03C4720038F044 = {
@@ -764,6 +816,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9AA213811FAD9F89002B23F9 /* EbPolicyDetailChild.xib in Resources */,
 				9A124E4D1F4C660C00AC18B5 /* Info.plist in Resources */,
 				9A124DCD1F4C64D800AC18B5 /* PolicyGroup.xib in Resources */,
 				9A3DB62E1F68202600C059D0 /* CustomAlertMember.xib in Resources */,
@@ -782,6 +835,7 @@
 				9A124E6F1F4C716A00AC18B5 /* AccountSummaryView.xib in Resources */,
 				9A7402C81F69219800B87A55 /* CustomAlertForget.xib in Resources */,
 				9A124E061F4C657400AC18B5 /* ButtonBar.xib in Resources */,
+				9AA213831FAD9FC3002B23F9 /* EbPolicyDetailGroup.xib in Resources */,
 				9A124E151F4C658300AC18B5 /* InformationView.xib in Resources */,
 				9A124DDF1F4C650C00AC18B5 /* DataTableViewCell.xib in Resources */,
 				9A124DF51F4C654B00AC18B5 /* MemberGroup.xib in Resources */,
@@ -964,6 +1018,7 @@
 				9AFFF7171F516B0400FAD8AD /* ContactAr.swift in Sources */,
 				9A124E081F4C657400AC18B5 /* ButtonBarPagerTabStripViewController.swift in Sources */,
 				9A7402C41F68F96A00B87A55 /* MemberChild.swift in Sources */,
+				9AA2137F1FAD9F76002B23F9 /* EbPolicyDetailChild.swift in Sources */,
 				9A124E091F4C657400AC18B5 /* ButtonBarView.swift in Sources */,
 				9A124DF31F4C654B00AC18B5 /* MemberDetails.swift in Sources */,
 				9A124E511F4C660C00AC18B5 /* LoginController.swift in Sources */,
@@ -976,6 +1031,7 @@
 				9A91E7391F4EEA25007CEC74 /* PRE_APPROVALS+CoreDataClass.swift in Sources */,
 				9A124E221F4C65BA00AC18B5 /* CustomPreapproval.swift in Sources */,
 				9A91E73E1F4EEA25007CEC74 /* POLICY_INSTALLMENT+CoreDataProperties.swift in Sources */,
+				9A86B7351F8CAAF60071679E /* FAQController.swift in Sources */,
 				9A91E7471F4EEA25007CEC74 /* MASTER_DATA+CoreDataClass.swift in Sources */,
 				9A124DE01F4C650C00AC18B5 /* ExSlideMenuController.swift in Sources */,
 				9A91E7461F4EEA25007CEC74 /* STAFF_DETAILS_POLICY+CoreDataProperties.swift in Sources */,
@@ -1002,16 +1058,20 @@
 				9A124E551F4C696500AC18B5 /* PolicyChild.swift in Sources */,
 				9A91E7431F4EEA25007CEC74 /* STAFF_DETAILS+CoreDataClass.swift in Sources */,
 				9A124DE51F4C650C00AC18B5 /* String.swift in Sources */,
+				9AA2137A1FAD9A39002B23F9 /* EB_POLICY_GROUP+CoreDataProperties.swift in Sources */,
 				9A124E6D1F4C710900AC18B5 /* AccountSummary.swift in Sources */,
 				9A91E76A1F4EFDDD007CEC74 /* ACCOUNT_SUMMARY_LINES+CoreDataProperties.swift in Sources */,
 				9A124E071F4C657400AC18B5 /* ButtonBarPagerTabStripSettings.swift in Sources */,
+				9A86B7391F8CAC930071679E /* FAQ.swift in Sources */,
 				9A91E7421F4EEA25007CEC74 /* STAFF_DETAILS_SALARY+CoreDataProperties.swift in Sources */,
 				9A91E74E1F4EEA25007CEC74 /* DEPENDENT_DETAILS+CoreDataProperties.swift in Sources */,
 				9A124E351F4C65DC00AC18B5 /* Contact.swift in Sources */,
 				9A124DE31F4C650C00AC18B5 /* LeftViewController.swift in Sources */,
+				9AA2137D1FAD9F56002B23F9 /* EbPolicyDetailGroup.swift in Sources */,
 				9AE5BF091F4D9AA50045AEC2 /* ButtonBarPagerTabStripViewControllerSalary.swift in Sources */,
 				9AFFF71B1F516C4A00FAD8AD /* ExpandableHeaderViewDelegeteAr.swift in Sources */,
 				9A91E74B1F4EEA25007CEC74 /* PDF+CoreDataClass.swift in Sources */,
+				9A4A272A1FAF252000A76F7B /* EB_POLICY_CHILD+CoreDataClass.swift in Sources */,
 				9A124E0F1F4C657400AC18B5 /* SwipeDirection.swift in Sources */,
 				9A124E0D1F4C657400AC18B5 /* PagerTabStripError.swift in Sources */,
 				9A124E271F4C65C200AC18B5 /* Preapprovals.swift in Sources */,
@@ -1021,9 +1081,11 @@
 				9A124E2D1F4C65D000AC18B5 /* CustomAlertViewController.swift in Sources */,
 				9A124DE61F4C650C00AC18B5 /* UIApplication.swift in Sources */,
 				9A124DDE1F4C650C00AC18B5 /* DataTableViewCell.swift in Sources */,
+				9A86B7371F8CAB720071679E /* ExpandableHeaderViewFAQ.swift in Sources */,
 				9A124E4B1F4C660C00AC18B5 /* HomeController.swift in Sources */,
 				9A124DE41F4C650C00AC18B5 /* SlideMenuController.swift in Sources */,
 				9A91E7481F4EEA25007CEC74 /* MASTER_DATA+CoreDataProperties.swift in Sources */,
+				9A4A272B1FAF252000A76F7B /* EB_POLICY_CHILD+CoreDataProperties.swift in Sources */,
 				9A124E381F4C65DC00AC18B5 /* ExpandableHeaderViewDelegate.swift in Sources */,
 				9A124E291F4C65C200AC18B5 /* PreApprovalsView.swift in Sources */,
 				9A124E531F4C660C00AC18B5 /* MenuController.swift in Sources */,
@@ -1042,11 +1104,13 @@
 				9A91E73D1F4EEA25007CEC74 /* POLICY_INSTALLMENT+CoreDataClass.swift in Sources */,
 				9A91E7681F4EFDDD007CEC74 /* MASTER_DATA_LINES+CoreDataProperties.swift in Sources */,
 				9A91E76B1F4EFDDD007CEC74 /* STAFF_DETAILS_LINES+CoreDataClass.swift in Sources */,
+				9AA213791FAD9A39002B23F9 /* EB_POLICY_GROUP+CoreDataClass.swift in Sources */,
 				9A91E7671F4EFDDD007CEC74 /* MASTER_DATA_LINES+CoreDataClass.swift in Sources */,
 				9A124DD01F4C64F100AC18B5 /* CoreDataManager.swift in Sources */,
 				9A3DB6301F68203800C059D0 /* CustomAlertMember.swift in Sources */,
 				9A91E7691F4EFDDD007CEC74 /* ACCOUNT_SUMMARY_LINES+CoreDataClass.swift in Sources */,
 				9A124E0E1F4C657400AC18B5 /* PagerTabStripViewController.swift in Sources */,
+				9AA213851FAD9FDB002B23F9 /* EbPolicyDetail.swift in Sources */,
 				9A124E361F4C65DC00AC18B5 /* ContactInfo.swift in Sources */,
 				9A124DCC1F4C64D700AC18B5 /* PolicyGroup.swift in Sources */,
 			);
@@ -1184,11 +1248,11 @@
 			baseConfigurationReference = 48D7F33B83C56CED151F4D96 /* Pods-RMS.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = J8MEEP6JJR;
+				DEVELOPMENT_TEAM = N7AT5BP6DM;
 				INFOPLIST_FILE = RMS/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = netsol.RMS;
+				PRODUCT_BUNDLE_IDENTIFIER = rmsllcoman.com;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 3.0;
 			};
@@ -1199,11 +1263,11 @@
 			baseConfigurationReference = 1E6B07B74E9B69D3ACB49638 /* Pods-RMS.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = J8MEEP6JJR;
+				DEVELOPMENT_TEAM = N7AT5BP6DM;
 				INFOPLIST_FILE = RMS/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = netsol.RMS;
+				PRODUCT_BUNDLE_IDENTIFIER = rmsllcoman.com;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 3.0;
 			};

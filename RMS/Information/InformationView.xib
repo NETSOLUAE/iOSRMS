@@ -16,38 +16,37 @@
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="pdf" translatesAutoresizingMaskIntoConstraints="NO" id="0d5-Hl-sap">
-                    <rect key="frame" x="5" y="5" width="50" height="46"/>
+                    <rect key="frame" x="10" y="15" width="44" height="40"/>
                     <constraints>
-                        <constraint firstAttribute="height" constant="46" id="FlA-Dc-uaB"/>
-                        <constraint firstAttribute="width" constant="50" id="Upw-4a-i2v"/>
-                    </constraints>
-                </imageView>
-                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="download" translatesAutoresizingMaskIntoConstraints="NO" id="g7w-Ou-VQb">
-                    <rect key="frame" x="344" y="12" width="26" height="23"/>
-                    <constraints>
-                        <constraint firstAttribute="height" constant="23" id="VVr-Q7-OP6"/>
-                        <constraint firstAttribute="width" constant="26" id="ulN-Kp-vOW"/>
+                        <constraint firstAttribute="height" constant="40" id="FlA-Dc-uaB"/>
+                        <constraint firstAttribute="width" constant="44" id="Upw-4a-i2v"/>
                     </constraints>
                 </imageView>
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="80b-kv-idj">
-                    <rect key="frame" x="66" y="12" width="243" height="21"/>
+                    <rect key="frame" x="65" y="25" width="35.5" height="21"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="21" id="DdS-a4-Gel"/>
-                        <constraint firstAttribute="width" constant="243" id="byJ-Vs-G1U"/>
                     </constraints>
                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
                     <nil key="textColor"/>
                     <nil key="highlightedColor"/>
                 </label>
+                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="download" translatesAutoresizingMaskIntoConstraints="NO" id="g7w-Ou-VQb">
+                    <rect key="frame" x="339" y="24" width="26" height="23"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="23" id="VVr-Q7-OP6"/>
+                        <constraint firstAttribute="width" constant="26" id="ulN-Kp-vOW"/>
+                    </constraints>
+                </imageView>
             </subviews>
             <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
             <constraints>
-                <constraint firstItem="80b-kv-idj" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" constant="12" id="PW8-HE-gWq"/>
-                <constraint firstItem="0d5-Hl-sap" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" constant="5" id="TTR-T4-jBL"/>
+                <constraint firstItem="g7w-Ou-VQb" firstAttribute="centerY" secondItem="iN0-l3-epB" secondAttribute="centerY" id="HVk-5s-SJW"/>
+                <constraint firstItem="0d5-Hl-sap" firstAttribute="centerY" secondItem="iN0-l3-epB" secondAttribute="centerY" id="PhJ-AG-3VD"/>
+                <constraint firstItem="0d5-Hl-sap" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" constant="10" id="TTR-T4-jBL"/>
                 <constraint firstItem="80b-kv-idj" firstAttribute="leading" secondItem="0d5-Hl-sap" secondAttribute="trailing" constant="11" id="e5y-zg-7eX"/>
-                <constraint firstItem="g7w-Ou-VQb" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" constant="12" id="i9X-wK-JPP"/>
-                <constraint firstAttribute="trailing" secondItem="g7w-Ou-VQb" secondAttribute="trailing" constant="5" id="kFG-fK-QKS"/>
-                <constraint firstItem="0d5-Hl-sap" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" constant="5" id="yIj-Zo-xhB"/>
+                <constraint firstAttribute="trailing" secondItem="g7w-Ou-VQb" secondAttribute="trailing" constant="10" id="kFG-fK-QKS"/>
+                <constraint firstItem="80b-kv-idj" firstAttribute="centerY" secondItem="iN0-l3-epB" secondAttribute="centerY" id="wod-zX-NZz"/>
             </constraints>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
             <connections>

@@ -70,14 +70,38 @@ class CustomAlertClaims : UIViewController {
         diagnosis.text = diagnosis1
         treatmentDate.text = treatmentDate1
         status.text = status1
-        claimedAmount.text = claimedAmount1
-        approvedAmount.text = approvedAmount1
-        excess.text = excess1
-        disallo.text = disallo1
-        settledRO.text = settledRO1
+        if (claimedAmount1 == "") {
+           claimedAmount.text = claimedAmount1
+        } else {
+            claimedAmount.text = claimedAmount1 + " OMR"
+        }
+        if (approvedAmount1 == "") {
+            approvedAmount.text = approvedAmount1
+        } else {
+            approvedAmount.text = approvedAmount1 + " OMR"
+        }
+        if (excess1 == "") {
+            excess.text = excess1
+        } else {
+            excess.text = excess1 + " OMR"
+        }
+        if (disallo1 == "") {
+            disallo.text = disallo1
+        } else {
+            disallo.text = disallo1 + " OMR"
+        }
+        if (settledRO1 == "") {
+            settledRO.text = settledRO1
+        } else {
+            settledRO.text = settledRO1 + " OMR"
+        }
         modeOfPayment.text = modeOfPayment1
         chequeNo.text = chequeNo1
-        settled.text = settled1
+        if (settled1 == "") {
+            settled.text = settled1
+        } else {
+            settled.text = settled1  + " OMR"
+        }
         remarks.text = remarks1
     }
 }

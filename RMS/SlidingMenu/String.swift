@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import UIKit
 
 extension String {
     static func className(_ aClass: AnyClass) -> String {
@@ -19,5 +20,24 @@ extension String {
     
     var length: Int {
         return self.characters.count
+    }
+    
+    var htmlToAttributedString: NSAttributedString? {
+        
+        guard
+            let d = data(using: String.Encoding.utf8, allowLossyConversion: true)
+            else {
+                return nil
+        }
+        
+        do {
+            let str = try NSAttributedString(data: d,
+                                             options: [NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType],
+                                             documentAttributes: nil)
+            return str
+        } catch let error as NSError {
+            print(error.localizedDescription)
+            return  nil
+        }
     }
 }

@@ -33,7 +33,7 @@ class ContactInfo: UIViewController {
         self.showActivityIndicator(view: self.view, targetVC: self)
         self.contactInfo(actionId: "company_addresses")
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
+        // Do any additional setup after loading the view, typically from a nib. 
     }
     
     @IBAction func segmentChanged(_ sender: UISegmentedControl) {
@@ -398,7 +398,7 @@ extension ContactInfo: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
-        return 2
+        return 1
     }
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section1: Int) -> UIView? {

@@ -126,7 +126,7 @@ class CustomAlertViewController : UIViewController, UITextFieldDelegate {
                 let newPinText = newPin.text ?? ""
                 let confirmNewPinText = confirmPin.text ?? ""
                 if (pinText != "" && pinText == oldPinText) {
-                    if (newPinText.length == 4 && confirmNewPinText.length == 4){
+                    if (newPinText.length > 5 && confirmNewPinText.length > 5){
                         if (newPinText != oldPinText) {
                             if (newPinText == confirmNewPinText) {
                                 if (mobileNumber != "" && staffID != ""  && clientID != "" ){
@@ -148,7 +148,7 @@ class CustomAlertViewController : UIViewController, UITextFieldDelegate {
                         }
                     } else {
                         LoadingIndicatorView.hideInMain()
-                        self.showToast(message: "Please Enter valid Password")
+                        self.showToast(message: "Password should be more than 5 characters")
                         return
                     }
                 } else {

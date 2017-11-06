@@ -2,15 +2,16 @@
   "images" : [
     {
       "idiom" : "universal",
-      "filename" : "child_male.png",
       "scale" : "1x"
     },
     {
       "idiom" : "universal",
+      "filename" : "child_male.png",
       "scale" : "2x"
     },
     {
       "idiom" : "universal",
+      "filename" : "child_male-1.png",
       "scale" : "3x"
     }
   ],

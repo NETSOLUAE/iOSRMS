@@ -57,6 +57,23 @@ class WebserviceManager: NSObject {
                                 completion(.Error(error?.localizedDescription ?? self.constants.errorMessage))
                             }
                         }
+                    } else if (type == "ebPolicy") {
+                        var require_update = ""
+                        if (json["require_update"] != nil){
+                            require_update = json["require_update"] as! String
+                        }
+                        guard let itemsJsonArray = json["data"] as? [String: AnyObject] else {
+                            return completion(.Error(error?.localizedDescription ?? self.constants.errorMessage))
+                        }
+                        if (status == "success"){
+                            DispatchQueue.main.async {
+                                completion(.SuccessSingle(itemsJsonArray, require_update))
+                            }
+                        } else if (status == "fail") {
+                            DispatchQueue.main.async {
+                                completion(.Error(error?.localizedDescription ?? self.constants.errorMessage))
+                            }
+                        }
                     } else {
                         var require_update = ""
                         if (json["require_update"] != nil){

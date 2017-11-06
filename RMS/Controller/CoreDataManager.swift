@@ -88,7 +88,7 @@ class CoreDataManager: NSObject {
         let context = persistentContainer.viewContext
         if let masterEntity = NSEntityDescription.insertNewObject(forEntityName: String(describing: MASTER_DATA.self), into: context) as? MASTER_DATA {
             masterEntity.pin = pin
-            masterEntity.mobileNumber = phoneNumber
+            masterEntity.mobileNumber = dictionary["mobile_no"] as? String
             masterEntity.changePin = dictionary["change_pin"] as? String
             masterEntity.staffID = dictionary["staff_id"] as? String
             masterEntity.clientID = dictionary["client_no"] as? String
@@ -145,22 +145,24 @@ class CoreDataManager: NSObject {
             staffEntity.effective_date = dictionary["effective_date"] as? String ?? ""
             staffEntity.email = dictionary["email"] as? String ?? ""
             if dictionary["dependents"] != nil {
-                let dependent = dictionary["dependents"] as! [[String:Any]]
-                for dependent in dependent {
-                    if let dependentEntity = NSEntityDescription.insertNewObject(forEntityName: String(describing: DEPENDENT_DETAILS.self), into: context) as? DEPENDENT_DETAILS {
-                        dependentEntity.client_id = dependent["client_id"] as? String ?? ""
-                        dependentEntity.staff_id = dependent["staff_id"] as? String ?? ""
-                        dependentEntity.policy_ref = dependent["policy_ref"] as? String ?? ""
-                        dependentEntity.member_id = dependent["member_id"] as? String ?? ""
-                        dependentEntity.member_name = dependent["member_name"] as? String ?? ""
-                        dependentEntity.relationship = dependent["relationship"] as? String ?? ""
-                        dependentEntity.dender = dependent["dender"] as? String ?? ""
-                        dependentEntity.nationality = dependent["nationality"] as? String ?? ""
-                        dependentEntity.phone = dependent["phone"] as? String ?? ""
-                        dependentEntity.effective_date = dependent["effective_date"] as? String ?? ""
-                        dependentEntity.email = dependent["email"] as? String ?? ""
-                        staffEntity.addToDependent(_ :dependentEntity)
+                if let dependent = dictionary["dependents"] as? [[String:Any]] {
+                    for dependent in dependent {
+                        if let dependentEntity = NSEntityDescription.insertNewObject(forEntityName: String(describing: DEPENDENT_DETAILS.self), into: context) as? DEPENDENT_DETAILS {
+                            dependentEntity.client_id = dependent["client_id"] as? String ?? ""
+                            dependentEntity.staff_id = dependent["staff_id"] as? String ?? ""
+                            dependentEntity.policy_ref = dependent["policy_ref"] as? String ?? ""
+                            dependentEntity.member_id = dependent["member_id"] as? String ?? ""
+                            dependentEntity.member_name = dependent["member_name"] as? String ?? ""
+                            dependentEntity.relationship = dependent["relationship"] as? String ?? ""
+                            dependentEntity.dender = dependent["dender"] as? String ?? ""
+                            dependentEntity.nationality = dependent["nationality"] as? String ?? ""
+                            dependentEntity.phone = dependent["phone"] as? String ?? ""
+                            dependentEntity.effective_date = dependent["effective_date"] as? String ?? ""
+                            dependentEntity.email = dependent["email"] as? String ?? ""
+                            staffEntity.addToDependent(_ :dependentEntity)
+                        }
                     }
+                    
                 }
             }
             
@@ -180,6 +182,74 @@ class CoreDataManager: NSObject {
                         } else if (key == "pre_approval_form"){
                             pdfEntity.pdf_name = "Pre Approval Form"
                             pdfEntity.pdf_link = pdf["pre_approval_form"] as? String ?? ""
+                        }
+                    }
+                }
+            }
+            return staffEntity
+        }
+        return nil
+    }
+    
+    func clearEbPolicyDetails() {
+        do {
+            let context = persistentContainer.viewContext
+            let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: String(describing: EB_POLICY_GROUP.self))
+            let fetchRequestDependent = NSFetchRequest<NSFetchRequestResult>(entityName: String(describing: EB_POLICY_CHILD.self))
+            do {
+                let objects  = try context.fetch(fetchRequest) as? [NSManagedObject]
+                _ = objects.map{$0.map{context.delete($0)}}
+                let objectsDependent  = try context.fetch(fetchRequestDependent) as? [NSManagedObject]
+                _ = objectsDependent.map{$0.map{context.delete($0)}}
+                self.saveContext()
+            } catch let error {
+                print("ERROR DELETING : \(error)")
+            }
+        }
+    }
+    
+ func createEbPolicyEntityFrom(dictionary: [String: AnyObject]) -> NSManagedObject? {
+        
+        let context = persistentContainer.viewContext
+        if let staffEntity = NSEntityDescription.insertNewObject(forEntityName: String(describing: EB_POLICY_GROUP.self), into: context) as? EB_POLICY_GROUP {
+            staffEntity.memberNameEb = dictionary["member_name"] as? String ?? ""
+            staffEntity.memberTypeEb = dictionary["member_id"] as? String ?? ""
+            staffEntity.relationshipTypeEb = "P"
+            if dictionary["policies"] != nil {
+                if let dependent = dictionary["policies"] as? [[String:Any]] {
+                    for dependent in dependent {
+                        if let dependentEntity = NSEntityDescription.insertNewObject(forEntityName: String(describing: EB_POLICY_CHILD.self), into: context) as? EB_POLICY_CHILD {
+                            dependentEntity.memberIdEb = dictionary["member_id"] as? String ?? ""
+                            dependentEntity.staffIdEb = dependent["staff_id"] as? String ?? ""
+                            dependentEntity.companyNameEb = dependent["company_name"] as? String ?? ""
+                            dependentEntity.policyRefEb = dependent["policy_no"] as? String ?? ""
+                            dependentEntity.startDateEb = dependent["start_date"] as? String ?? ""
+                            dependentEntity.endDateEb = dependent["end_date"] as? String ?? ""
+                        }
+                    }
+                }
+            }
+            if dictionary["dependents"] != nil {
+                if let dependent = dictionary["dependents"] as? [[String:Any]] {
+                    for dependent in dependent {
+                        if let staffEntity = NSEntityDescription.insertNewObject(forEntityName: String(describing: EB_POLICY_GROUP.self), into: context) as? EB_POLICY_GROUP {
+                            staffEntity.memberNameEb = dependent["member_name"] as? String ?? ""
+                            staffEntity.memberTypeEb = dependent["member_id"] as? String ?? ""
+                            staffEntity.relationshipTypeEb = "D"
+                            if dependent["plicies"] != nil {
+                                if let dependentList = dependent["plicies"] as? [[String:Any]] {
+                                    for dependentChild in dependentList {
+                                        if let dependentEntity = NSEntityDescription.insertNewObject(forEntityName: String(describing: EB_POLICY_CHILD.self), into: context) as? EB_POLICY_CHILD {
+                                            dependentEntity.memberIdEb = dependent["member_id"] as? String ?? ""
+                                            dependentEntity.staffIdEb = dependentChild["staff_id"] as? String ?? ""
+                                            dependentEntity.companyNameEb = dependentChild["company_name"] as? String ?? ""
+                                            dependentEntity.policyRefEb = dependentChild["policy_no"] as? String ?? ""
+                                            dependentEntity.startDateEb = dependentChild["start_date"] as? String ?? ""
+                                            dependentEntity.endDateEb = dependentChild["end_date"] as? String ?? ""
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -278,7 +348,13 @@ class CoreDataManager: NSObject {
             preApprovalEntity.staff_id = dictionary["staff_id"] as? String ?? ""
             preApprovalEntity.staff_name = dictionary["staff_name"] as? String ?? ""
             preApprovalEntity.pol_ref = dictionary["pol_ref"] as? String ?? ""
-            preApprovalEntity.entry_dt = dictionary["entry_dt"] as? String ?? ""
+            let entryDateTime = dictionary["entry_dt"] as? String ?? ""
+            if (entryDateTime != "" && entryDateTime.length > 10) {
+                let entryDate = entryDateTime.substring(to: entryDateTime.index(entryDateTime.startIndex, offsetBy: 10))
+                preApprovalEntity.entry_dt = entryDate
+            } else {
+                preApprovalEntity.entry_dt = dictionary["entry_dt"] as? String ?? ""
+            }
             preApprovalEntity.diagnosis = dictionary["diagnosis"] as? String ?? ""
             preApprovalEntity.place_code = dictionary["place_code"] as? String ?? ""
             preApprovalEntity.hospital_name = dictionary["hospital_name"] as? String ?? ""
